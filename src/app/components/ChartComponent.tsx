@@ -9,9 +9,10 @@ import {
   Title,
   Tooltip,
   Legend,
+  ChartData,
 } from "chart.js";
 
-// ✅ Register Chart.js Components
+//  Register Chart.js Components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -21,7 +22,6 @@ ChartJS.register(
   Legend
 );
 
-// ✅ Static Placeholder Data for Now
 const labels = [
   "Walmart",
   "Target",
@@ -36,7 +36,7 @@ const labels = [
 
 const rideData = [25, 18, 15, 10, 13, 11, 17, 14, 20];
 
-const data = {
+const data: ChartData<"bar"> = {
   labels,
   datasets: [
     {
@@ -50,39 +50,30 @@ const data = {
         "#FFA500",
         "#00FFFF",
         "#800080",
-        "#808080",
-        "#000000",
+        "#FFFF00",
+        "#FF0000",
       ],
       borderColor: "#fff",
       borderWidth: 2,
-      hoverBackgroundColor: "#881124", // Bobcat Exress Theme
+      hoverBackgroundColor: "#881124",
     },
   ],
-};
-
-// Chart Options
+} as const;
 
 const options = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
     legend: {
-      position: "top",
       labels: {
         color: "#333",
-        font: {
-          size: 14,
-          weight: "bold", // ✅ Fix: Explicitly cast the weight
-        },
+        font: { size: 14 },
       },
     },
     title: {
       display: true,
       text: "🚌 Ride Requests by Destination at Bates College",
-      font: {
-        size: 16,
-        weight: "bold", // ✅ Fix: Explicitly cast the weight
-      },
+      font: { size: 16 },
       color: "#333",
     },
   },
@@ -90,37 +81,30 @@ const options = {
     x: {
       ticks: {
         color: "#333",
-        font: {
-          size: 12,
-          weight: "normal", // ✅ Fix: Explicitly cast the weight
-        },
+        font: { size: 12 },
       },
     },
     y: {
       ticks: {
         color: "#333",
-        font: {
-          size: 12,
-          weight: "normal", // ✅ Fix: Explicitly cast the weight
-        },
+        font: { size: 12 },
         stepSize: 1,
       },
     },
   },
-};
+} as const;
 
 export default function StaticDestinationChart() {
   return (
     <div className="w-full shadow-lg rounded-lg border border-gray-200">
-      {/* Title */}
-      <h2 className="text-lg font-semibold text-gray-700 mb-4 text-center"></h2>
+      <h2 className="text-lg font-semibold text-gray-700 mb-4 text-center">
+        📊 Ride Requests by Destination
+      </h2>
 
-      {/* Chart */}
-      <div className="w-full h-80 md:h-72 lg:h-64 xl:h-72 flex items-center justify-center">
+      <div className="w-full h-72 flex items-center justify-center">
         <Bar data={data} options={options} />
       </div>
 
-      {/* Footer */}
       <div className="mt-4 p-3 text-center text-gray-600 bg-gray-100 rounded-b-lg text-sm">
         Data represents ride requests per destination.
       </div>

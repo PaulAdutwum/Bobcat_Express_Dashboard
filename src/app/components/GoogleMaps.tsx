@@ -9,14 +9,14 @@ const GOOGLE_MAPS_API_KEY: string =
   process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
 if (!GOOGLE_MAPS_API_KEY) {
   throw new Error(
-    "ç Missing Google Maps API Key! Set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in your .env file."
+    "Missing Google Maps API Key! Set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in your .env file."
   );
 }
 
 const LIBRARIES: ("places" | "marker")[] = ["places", "marker"];
 
-//  Map Configuration
-const MAP_ID = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID;
+// Map Configuration
+const MAP_ID = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID || undefined;
 const containerStyle = { width: "100%", height: "80vh" };
 const defaultLocation = { lat: 44.1003, lng: -70.2148 };
 
@@ -29,40 +29,39 @@ export default function GoogleMapComponent() {
 
   // State Variables
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [marker, setMarker] = useState<any>(null);
+  const [marker, setMarker] = useState<google.maps.Marker | null>(null);
   const [location, setLocation] = useState(defaultLocation);
   const [address, setAddress] = useState<string>("Fetching address...");
 
-  //  Initialize Map Instance
+  // Initialize Map Instance
   const onLoad = (mapInstance: google.maps.Map) => {
     setMap(mapInstance);
   };
 
-  //  Load Advanced Marker (if supported)
+  // Load Marker when Map is Ready
   useEffect(() => {
     async function loadMarker() {
       if (!isLoaded || !map) return;
       try {
-        const { AdvancedMarkerElement } = (await google.maps.importLibrary(
-          "marker"
-        )) as google.maps.MarkerLibrary;
+        if (!window.google?.maps) return; // Ensure Google Maps API is loaded
 
-        const newMarker = new AdvancedMarkerElement({
+        // Create a new marker and assign it to state
+        const newMarker = new google.maps.Marker({
           position: location,
+          map,
           title: "Shuttle Location",
-          map: map,
         });
 
         setMarker(newMarker);
       } catch (error) {
-        console.error("Error loading AdvancedMarkerElement:", error);
+        console.error("Error loading Marker:", error);
       }
     }
 
     loadMarker();
-  }, [isLoaded, map, location]); // Runs only when the map is available
+  }, [isLoaded, map, location]);
 
-  //  Fetch Initial Shuttle Location from Firestore
+  // Fetch Initial Shuttle Location from Firestore
   useEffect(() => {
     async function fetchData() {
       try {
@@ -71,25 +70,26 @@ export default function GoogleMapComponent() {
 
         if (docSnap.exists()) {
           const data = docSnap.data();
-          console.log(" Initial Shuttle Location:", data);
+          console.log("Initial Shuttle Location:", data);
           if (data?.lat !== undefined && data?.lng !== undefined) {
             setLocation({ lat: data.lat, lng: data.lng });
             fetchAddress(data.lat, data.lng);
           }
         } else {
-          console.log(" No shuttle data found in Firestore!");
+          console.log("No shuttle data found in Firestore!");
         }
       } catch (error) {
-        console.error(" Error fetching initial data:", error);
+        console.error("Error fetching initial data:", error);
       }
     }
 
     fetchData();
 
+    // Subscribe to Firestore updates
     const unsub = onSnapshot(doc(db, "drivers", "shuttle-1"), (doc) => {
       if (doc.exists()) {
         const data = doc.data();
-        console.log(" Real-time update:", data);
+        console.log("Real-time update:", data);
         if (data?.lat !== undefined && data?.lng !== undefined) {
           setLocation({ lat: data.lat, lng: data.lng });
           fetchAddress(data.lat, data.lng);
@@ -97,7 +97,7 @@ export default function GoogleMapComponent() {
       }
     });
 
-    return () => unsub(); // Cleanup Firestore listener
+    return () => unsub();
   }, []);
 
   // Reverse Geocoding to Get Address

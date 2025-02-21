@@ -9,6 +9,8 @@ import {
   Title,
   Tooltip,
   Legend,
+  ChartOptions,
+  ChartData,
 } from "chart.js";
 
 // ✅ Register Chart.js Components
@@ -22,7 +24,7 @@ ChartJS.register(
 );
 
 // ✅ Example Data (Time vs Destinations)
-const destinationScatterData = {
+const destinationScatterData: ChartData<"scatter"> = {
   datasets: [
     {
       label: "Shuttle Destinations Over Time",
@@ -44,8 +46,8 @@ const destinationScatterData = {
   ],
 };
 
-// ✅ Chart Options
-const options = {
+// ✅ FIX: Explicitly define `options` using `ChartOptions<"scatter">`
+const options: ChartOptions<"scatter"> = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
@@ -58,10 +60,12 @@ const options = {
   },
   scales: {
     x: {
+      type: "linear", // ✅ FIX: Ensure this is set for scatter charts
       title: { display: true, text: "Time of Day (Hours)" },
       ticks: { color: "#333", font: { weight: "bold" } },
     },
     y: {
+      type: "linear", // ✅ FIX: Ensure this is set for scatter charts
       title: { display: true, text: "Number of Destinations" },
       ticks: { color: "#333", font: { weight: "bold" }, stepSize: 1 },
     },
@@ -72,7 +76,9 @@ export default function AnalyticsScatterPlot() {
   return (
     <div className="w-full h-full rounded-lg shadow-md border border-gray-200">
       {/* Title */}
-      <h3 className="text-md font-semibold text-gray-700 text-center"></h3>
+      <h3 className="text-md font-semibold text-gray-700 text-center">
+        📊 Shuttle Destinations Over Time
+      </h3>
 
       {/* Scatter Chart */}
       <div className="w-full h-[400px] md:h-[350px] lg:h-[320px] xl:h-[340px] flex items-center justify-center">
