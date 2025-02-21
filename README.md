@@ -58,22 +58,25 @@ Bobcat Express Shuttle is a **Next.js-powered** **admin dashboard** and **ride r
 
 ### 📍 **Dashboard View**
 
-![Dashboard Screenshot](https://via.placeholder.com/800x400?text=Dashboard+View)
+![Dashboard Screenshot](https://github.com/user-attachments/assets/585fe779-d6b2-4b15-8cc8-1f18ac6c5921)
 
 ### 🚖 **Ride Request Form**
 
-![Ride Request Form](https://via.placeholder.com/800x400?text=Ride+Request+Form)
+![Ride Request Form](https://github.com/user-attachments/assets/65bc5570-0fb1-4887-9220-2ad8ef53e0b4)
 
 ### 📊 **Analytics & Charts**
 
-![Analytics Screenshot](https://via.placeholder.com/800x400?text=Analytics+Charts)
+![Analytics Screenshot](https://github.com/user-attachments/assets/00a3b2ec-9c80-4647-9b92-6520cb0b49fe)
 
 ### 💬 **Live Chat Feature**
 
-![Chat Screenshot](https://via.placeholder.com/800x400?text=Live+Chat)
+![Chat Screenshot](https://github.com/user-attachments/assets/d8acf0a2-8411-469d-b9a3-2effac4841e6)
 
 _(Replace these placeholders with actual screenshots after capturing your UI.)_
 
+![Analytics Screenshot](https://github.com/user-attachments/assets/955c5b0f-cdd6-4927-9832-ab6675adeca9)
+
+![Analytics Screenshot](https://github.com/user-attachments/assets/393a9cb1-20ec-41b1-8d40-64bcc0bb5494)
 
 
 ## **🚀 Getting Started**
