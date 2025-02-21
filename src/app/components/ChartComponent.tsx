@@ -67,12 +67,12 @@ const options = {
   maintainAspectRatio: false,
   plugins: {
     legend: {
-      position: "top" as const,
+      position: "top",
       labels: {
         color: "#333",
         font: {
           size: 14,
-          weight: "bold" as "bold", // ✅ Fix: Explicitly cast the weight
+          weight: "bold", // ✅ Fix: Explicitly cast the weight
         },
       },
     },
@@ -81,7 +81,7 @@ const options = {
       text: "🚌 Ride Requests by Destination at Bates College",
       font: {
         size: 16,
-        weight: "bold" as "bold", // ✅ Fix: Explicitly cast the weight
+        weight: "bold", // ✅ Fix: Explicitly cast the weight
       },
       color: "#333",
     },
@@ -92,7 +92,7 @@ const options = {
         color: "#333",
         font: {
           size: 12,
-          weight: "normal" as "normal", // ✅ Fix: Explicitly cast the weight
+          weight: "normal", // ✅ Fix: Explicitly cast the weight
         },
       },
     },
@@ -101,7 +101,7 @@ const options = {
         color: "#333",
         font: {
           size: 12,
-          weight: "normal" as "normal", // ✅ Fix: Explicitly cast the weight
+          weight: "normal", // ✅ Fix: Explicitly cast the weight
         },
         stepSize: 1,
       },
