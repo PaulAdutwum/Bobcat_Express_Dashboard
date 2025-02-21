@@ -72,11 +72,10 @@ Bobcat Express Shuttle is a **Next.js-powered** **admin dashboard** and **ride r
 
 ![Chat Screenshot](https://github.com/user-attachments/assets/d8acf0a2-8411-469d-b9a3-2effac4841e6)
 
-_(Replace these placeholders with actual screenshots after capturing your UI.)_
+(Replace these placeholders with actual screenshots after capturing your UI.)_
 
 ![Analytics Screenshot](https://github.com/user-attachments/assets/955c5b0f-cdd6-4927-9832-ab6675adeca9)
 
-![Analytics Screenshot](https://github.com/user-attachments/assets/393a9cb1-20ec-41b1-8d40-64bcc0bb5494)
 
 
 ## **🚀 Getting Started**
