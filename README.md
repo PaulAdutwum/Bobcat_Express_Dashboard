@@ -56,13 +56,13 @@ Bobcat Express Shuttle is a **Next.js-powered** **admin dashboard** and **ride r
 
 ## **📸 Screenshots**
 
+### 🚖 **Ride Request Form**
+
+![Homepage!](https://github.com/user-attachments/assets/44334bcc-7614-4d3a-8f4e-2a2048a3d8f8)
+
 ### 📍 **Dashboard View**
 
 ![Dashboard Screenshot](https://github.com/user-attachments/assets/585fe779-d6b2-4b15-8cc8-1f18ac6c5921)
-
-### 🚖 **Ride Request Form**
-
-![Ride Request Form](https://github.com/user-attachments/assets/65bc5570-0fb1-4887-9220-2ad8ef53e0b4)
 
 ### 📊 **Analytics & Charts**
 
