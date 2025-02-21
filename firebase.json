@@ -1,0 +1,12 @@
+{
+  "hosting": {
+    "public": ".next/static",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
