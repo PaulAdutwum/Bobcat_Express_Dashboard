@@ -1,7 +1,7 @@
-<<<<<<< HEAD
+
 # Bobcat-Express-Shuttle-
 I created a dashboard to support and improve campus transportation services at Bates College for all students
-=======
+
 # **Bobcat Express Shuttle 🚖**
 
 Bobcat Express Shuttle is a **Next.js-powered** **admin dashboard** and **ride request system** that allows **students at Bates College** to request, track, and manage shuttle rides efficiently.
@@ -52,7 +52,7 @@ Bobcat Express Shuttle is a **Next.js-powered** **admin dashboard** and **ride r
 | **Chart.js & React-ChartJS-2** | Data visualization & analytics                   |
 | **Tailwind CSS**               | Responsive UI styling                            |
 
----
+
 
 ## **📸 Screenshots**
 
@@ -74,15 +74,9 @@ Bobcat Express Shuttle is a **Next.js-powered** **admin dashboard** and **ride r
 
 _(Replace these placeholders with actual screenshots after capturing your UI.)_
 
----
+
 
 ## **🚀 Getting Started**
 
 ### **1️⃣ Install Dependencies**
 
-```sh
-npm install
-# or
-yarn install
-```
->>>>>>> 55e5a1b (Initial Commit- Added Bobcat Express Shuttle Project)
