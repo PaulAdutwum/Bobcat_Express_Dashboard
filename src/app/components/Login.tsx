@@ -11,15 +11,15 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FaGoogle, FaArrowLeft } from "react-icons/fa";
 
-// ✅ Styled Input Field
+// Styled Input Field
 const inputStyle =
   "w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#881124]";
 
-// ✅ Styled Button
+// Styled Button
 const buttonStyle =
   "w-full py-3 bg-[#881124] text-white font-semibold rounded-lg hover:bg-[#a02234] transition duration-300";
 
-// ✅ Styled Error Message
+// Styled Error Message
 const errorStyle = "text-red-500 text-sm mt-2 text-center";
 
 export default function Login() {
@@ -28,7 +28,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  // ✅ Email/Password Login
+  // Email/Password Login
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(""); // Reset error
@@ -36,27 +36,27 @@ export default function Login() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/dashboard"); // Redirect to Dashboard
-    } catch (err) {
+    } catch {
       setError("Invalid email or password. Please try again.");
     }
   };
 
-  // ✅ Google Sign-In
+  // Google Sign-In
   const handleGoogleSignIn = async () => {
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
       router.push("/dashboard"); // Redirect to Dashboard
-    } catch (err) {
+    } catch {
       setError("Google Sign-In failed. Try again.");
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      {/* ✅ Login Box */}
+      {/* Login Box */}
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-        {/* 🔙 Back Button */}
+        {/* Back Button */}
         <Link
           href="/"
           className="flex items-center text-[#881124] hover:text-red-600 mb-4 transition duration-300"
@@ -64,7 +64,7 @@ export default function Login() {
           <FaArrowLeft className="mr-2" /> Back to Homepage
         </Link>
 
-        {/* 🔹 Login Header */}
+        {/* Login Header */}
         <h1 className="text-3xl font-bold text-center text-gray-900">
           Login to Bobcat Express
         </h1>
@@ -72,7 +72,7 @@ export default function Login() {
           Enter your details below
         </p>
 
-        {/* ✅ Login Form */}
+        {/* Login Form */}
         <form onSubmit={handleLogin} className="mt-6">
           <input
             type="email"
@@ -96,7 +96,7 @@ export default function Login() {
           </button>
         </form>
 
-        {/* 🔹 Google Sign-In */}
+        {/* Google Sign-In */}
         <div className="flex items-center mt-6">
           <div className="flex-1 border-t border-gray-300"></div>
           <span className="mx-4 text-gray-400">OR</span>
@@ -109,7 +109,7 @@ export default function Login() {
           <FaGoogle className="mr-2" /> Sign in with Google
         </button>
 
-        {/* 🔹 Signup Link */}
+        {/* Signup Link */}
         <p className="text-center text-gray-600 mt-4">
           Don’t have an account?{" "}
           <Link
@@ -121,7 +121,7 @@ export default function Login() {
         </p>
       </div>
 
-      {/* ✅ Footer */}
+      {/* Footer */}
       <footer className="bg-black text-white py-6 w-full text-center mt-12">
         <p className="text-sm">
           © {new Date().getFullYear()} Bobcat Express Shuttle. All rights

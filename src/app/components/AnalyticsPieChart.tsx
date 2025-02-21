@@ -6,7 +6,6 @@ import { Chart as ChartJS, ArcElement, Title, Tooltip, Legend } from "chart.js";
 // Register Chart.js components
 ChartJS.register(ArcElement, Title, Tooltip, Legend);
 
-// Example driver distribution for pie chart
 const driverLabels = [
   "Driver 65",
   "Driver 66",

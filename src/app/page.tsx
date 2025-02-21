@@ -15,19 +15,19 @@ export default function HomePage() {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUser(user);
+    auth.onAuthStateChanged((loggedInUser) => {
+      if (loggedInUser) {
+        setUser(loggedInUser);
       }
     });
   }, []);
 
-  // 🔹 Handle Firebase Google Sign-In
+  // Handle Firebase Google Sign-In
   const handleSignIn = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       setUser(result.user);
-      router.push("/dashboard"); // ✅ Redirect to Dashboard after login
+      router.push("/dashboard");
     } catch (error) {
       console.error("Login Error:", error);
     }
@@ -35,7 +35,6 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* 🔹 Header Section */}
       <header className="bg-[#881124] text-white py-6 shadow-lg">
         <div className="container mx-auto flex justify-between items-center px-6">
           {/* Bates College Logo */}
@@ -72,7 +71,6 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Hero Section with Typewriter Animation */}
       <main className="flex flex-col items-center justify-center text-center bg-gray-100 flex-grow p-10">
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
@@ -91,6 +89,13 @@ export default function HomePage() {
           </span>
         </motion.h1>
 
+        {/* ✅ Display Logged-in User (if available) */}
+        {user && (
+          <p className="text-lg text-gray-700 font-semibold">
+            Welcome, <span className="text-[#881124]">{user.email}</span>
+          </p>
+        )}
+
         {/* Typewriter Effect for Mission Statement */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
@@ -103,7 +108,7 @@ export default function HomePage() {
               "Campus Safety is committed to fostering an environment where all students feel safe to learn.",
               "Bobcat Express provides reliable Shuttle Services for Bates College Students",
               "Connecting You to Lewiston & Auburn",
-              "Bobcat Express supports  trips related to Community Engaged Learning, Medical Rides & Safe Rides",
+              "Bobcat Express supports trips related to Community Engaged Learning, Medical Rides & Safe Rides",
             ]}
             loop
             cursor
@@ -123,59 +128,6 @@ export default function HomePage() {
           <FaSignInAlt />
           <span>Sign in with Google</span>
         </motion.button>
-
-        <section className="container mx-auto mt-12 px-6 bg-gray-100 py-12">
-          <h2 className="text-3xl font-bold text-center text-gray-900">
-            Available Services
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-            {/*  Service 1 */}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="p-6 bg-white rounded-lg shadow-lg transition duration-300 flex flex-col items-center text-center"
-            >
-              <FaShuttleVan className="text-4xl text-[#881124]" />
-              <h3 className="mt-4 text-lg text-gray-400 font-bold">
-                Community Engaged Learning (CELS)
-              </h3>
-              <p className="text-gray-600 mt-2">
-                Safe transportation for students involved in community
-                engagement programs in Lewiston/Auburn.
-              </p>
-            </motion.div>
-
-            {/* Service 2 */}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="p-6 bg-white rounded-lg shadow-lg transition duration-300 flex flex-col items-center text-center"
-            >
-              <FaUserShield className="text-4xl text-[#881124]" />
-              <h3 className="mt-4 text-lg text-gray-400 font-bold">
-                Safe Ride Shuttle
-              </h3>
-              <p className="text-gray-600 mt-2">
-                A dedicated service ensuring students arrive safely to their
-                destinations at night.
-              </p>
-            </motion.div>
-
-            {/* Service 3 */}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="p-6 bg-white rounded-lg shadow-lg transition duration-300 flex flex-col items-center text-center"
-            >
-              <FaShuttleVan className="text-4xl text-[#881124]" />
-              <h3 className="mt-4 text-lg text-gray-400 font-bold">
-                Medical Appointments
-              </h3>
-              <p className="text-gray-600 mt-2">
-                Shuttle services for students requiring transportation to
-                medical appointments.
-              </p>
-            </motion.div>
-          </div>
-        </section>
       </main>
 
       {/* Footer Section */}

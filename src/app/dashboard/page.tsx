@@ -3,7 +3,6 @@
 import { useState } from "react";
 import ChartComponent from "../components/ChartComponent";
 import RideRequestForm from "../components/RidRequestForm";
-import UserLogs from "../../app/user-logs/page";
 import AnalyticsBarChart from "../components/AnalyticsBarChart";
 import AnalyticsPieChart from "../components/AnalyticsPieChart";
 import AnalyticsScatterPlot from "../components/AnalyticsScatterChart";
@@ -21,11 +20,6 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import { motion } from "framer-motion";
-import dynamic from "next/dynamic";
-
-const GoogleMapComponent = dynamic(() => import("../components/GoogleMaps"), {
-  ssr: false,
-});
 
 const links = [
   { label: "Dashboard", icon: FaCar, href: "/dashboard" },
@@ -100,7 +94,7 @@ export default function Dashboard() {
       </aside>
 
       {/*  Main Dashboard Section */}
-      <main className="flex-1 p-6">
+      <main className="flex-1">
         <div className="flex items-center justify-between md:justify-start relative ">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -136,7 +130,7 @@ export default function Dashboard() {
           >
             <ChartComponent />
           </motion.div>
-          {/* User Logs */}
+
           <motion.div
             whileHover={{ scale: 1.05 }}
             className="rounded-lg shadow-lg  transition duration-300 flex justify-center items-center"
