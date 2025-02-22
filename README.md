@@ -62,11 +62,11 @@ Bobcat Express Shuttle is a **Next.js-powered** **admin dashboard** and **ride r
 
 ### 📍 **Dashboard View**
 
-![Dashboard Screenshot](https://github.com/user-attachments/assets/585fe779-d6b2-4b15-8cc8-1f18ac6c5921)
+![Dashboard](https://github.com/user-attachments/assets/585fe779-d6b2-4b15-8cc8-1f18ac6c5921)
 
-### 📊 **Analytics & Charts**
+### 📊 ** The Dynamic User Logs Page populates User Rides for  Data Analytics**
 
-![Google Maps Page](https://github.com/user-attachments/assets/00a3b2ec-9c80-4647-9b92-6520cb0b49fe)
+![User Logs and Ride Request Data](https://github.com/user-attachments/assets/00a3b2ec-9c80-4647-9b92-6520cb0b49fe)
 
 ### 💬 **Google Maps for Tracking Live Shuttle Location**
 
