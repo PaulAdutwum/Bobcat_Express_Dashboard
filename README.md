@@ -54,21 +54,21 @@ Bobcat Express Shuttle is a **Next.js-powered** **admin dashboard** and **ride r
 
 
 
-## **📸 Screenshots**
+## 📸 Screenshots**
 
-### 🚖 **Homepage Uses Google Firebase to Authenticate Students to Ensure Security**
+###  Homepage Uses Google Firebase to Authenticate Students to Ensure Security
 
 ![Homepage!](https://github.com/user-attachments/assets/44334bcc-7614-4d3a-8f4e-2a2048a3d8f8)
 
-### 📍 **Dashboard with Datao Daily Rides **
+### Dashboard with Datao Daily Rides 
 
 ![Dashboard](https://github.com/user-attachments/assets/585fe779-d6b2-4b15-8cc8-1f18ac6c5921)
 
-### 📊 **The Dynamic User Logs Page populates User Rides for  Data Analytics**
+###  The Dynamic User Logs Page populates User Rides for  Data Analytics
 
 ![User Logs and Ride Request Data](https://github.com/user-attachments/assets/00a3b2ec-9c80-4647-9b92-6520cb0b49fe)
 
-### 💬 **Google Maps for Tracking Live Shuttle Location**
+### Google Maps for Tracking Live Shuttle Location
 
 ![Shuttle Locatio Page ](https://github.com/user-attachments/assets/d8acf0a2-8411-469d-b9a3-2effac4841e6)
 
