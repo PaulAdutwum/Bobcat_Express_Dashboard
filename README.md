@@ -1,12 +1,11 @@
-
-# Bobcat-Express-Shuttle-
+ Bobcat-Express-Shuttle-
 I created a dashboard to support and improve campus transportation services at Bates College for all students
 
-# Bobcat Express Shuttle 
+Bobcat Express Shuttle 
 
 Bobcat Express Shuttle is a Next.js-powered admin dashboard and ride request system that allows **students at Bates College** to request, track, and manage shuttle rides efficiently.
 
-##  Features
+ Features
 
  Admin Dashboard:
 
@@ -16,31 +15,31 @@ Bobcat Express Shuttle is a Next.js-powered admin dashboard and ride request sys
 Google Maps Integration**:
 
 - Real-time shuttle location tracking.
-- Estimate arrival times** based on live GPS data.
+- Estimate arrival times based on live GPS data.
 
  Firebase Backend:
 
 - Secure authentication & data storage.
 - Users can log in and access ride histories.
 
-📊 Analytics & Reporting**:
+📊 Analytics & Reporting:
 
-- Visualize rides per day, driver logs, and **trip statistics**.
-- **Dynamic charts** for analyzing shuttle efficiency.
+- Visualize rides per day, driver logs, and trip statistics.
+- Dynamic charts for analyzing shuttle efficiency.
 
-Real-time Chat Feature**:
+Real-time Chat Feature:
 
-- Students can chat with dispatchers** or other passengers**.
-- Chat functionality built using **Socket.io** for live updates.
+- Students can chat with dispatchers or other passengers**.
+- Chat functionality built using Socket.io for live updates.
 
 User-Friendly Interface:
 
-- Fully responsive** and **mobile-first design.
+- Fully responsive and mobile-first design.
 - Works seamlessly across phones, tablets, and desktops.
 
 
 
-## Tech Stack**
+## Tech Stack
 
 | Technology                     | Purpose                                          |
 | ------------------------------ | ------------------------------------------------ |
