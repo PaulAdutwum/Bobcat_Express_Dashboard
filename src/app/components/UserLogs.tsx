@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { db } from "@/lib/firebase"; // Firebase setup
+import { db } from "@/lib/firebase";
 import {
   collection,
   query,
@@ -12,14 +12,14 @@ import {
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa";
 
-// Define UserLog type with correct Timestamp type
+
 type UserLog = {
   id: string;
   userName: string;
   email: string;
   origin: string;
   destination: string;
-  requestTime: Timestamp; // ✅ Changed from `any` to `Timestamp`
+  requestTime: Timestamp; 
   status: string;
   totalRides: number;
 };
@@ -41,7 +41,7 @@ export default function UserLogs() {
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const rideData = snapshot.docs.map((doc) => ({
         id: doc.id,
-        ...(doc.data() as Omit<UserLog, "id">), // ✅ Type assertion applied
+        ...(doc.data() as Omit<UserLog, "id">), 
       }));
       setLogs(rideData);
     });
