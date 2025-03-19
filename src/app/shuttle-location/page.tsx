@@ -18,7 +18,7 @@ if (!GOOGLE_MAPS_API_KEY) {
   );
 }
 
-const MAP_ID = "e9e0cae333b31d7d"; // Replace with your Google Maps Map ID
+const MAP_ID = "e9e0cae333b31d7d"; 
 const containerStyle = { width: "100%", height: "80vh" };
 const defaultLocation = { lat: 44.1003, lng: -70.2148 };
 
@@ -45,7 +45,7 @@ export default function ShuttleLocation() {
       }
     });
 
-    return () => unsub(); // Cleanup Firestore listener
+    return () => unsub(); 
   }, []);
 
  
@@ -77,7 +77,7 @@ export default function ShuttleLocation() {
      
       <header className="bg-[#881124] text-white py-6 shadow-md">
         <div className="container mx-auto flex justify-between items-center px-6">
-          {/*  Bates Logo */}
+          
           <Image
             src="/bateslogow.png"
             alt="Bates College Logo"
