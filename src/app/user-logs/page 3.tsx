@@ -6,7 +6,7 @@ import { collection, query, onSnapshot, orderBy } from "firebase/firestore";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa";
 
-// ✅ TypeScript Interface for User Logs
+
 type UserLog = {
   id: string;
   userName: string;
@@ -18,7 +18,7 @@ type UserLog = {
   totalRides: number;
 };
 
-// ✅ Table Styles
+
 const tableStyles =
   "border border-gray-300 p-3 text-gray-700 text-center text-sm md:text-base";
 
