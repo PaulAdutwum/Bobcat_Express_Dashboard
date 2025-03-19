@@ -63,7 +63,7 @@ export default function UserLogs() {
       {/*  Ride Logs Table - Now Expands to Push Footer Down */}
       <div className="w-full max-w-6xl mx-auto bg-white p-6 rounded-lg shadow-md mt-6 border flex-1">
         <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
-          📜 Recent Ride Requests
+           Recent Ride Requests
         </h2>
 
         {/*  Logs Table */}
