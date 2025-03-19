@@ -43,7 +43,7 @@ export default function Dashboard() {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 md:block md:relative absolute inset-y-0 left-0`}
       >
-        {/* Bates Logo */}
+     
         <div className="flex items-center justify-center space-x-2">
           <Image
             src="/bateslogow.png"
@@ -65,7 +65,7 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Sidebar Navigation Links */}
+       
         <nav className="flex flex-col space-y-3">
           {links.map(({ label, icon: Icon, href }, index) => (
             <Link
@@ -83,7 +83,7 @@ export default function Dashboard() {
           ))}
         </nav>
 
-        {/* 🔙 Back to Homepage Button */}
+        
         <Link
           href="/"
           className="flex items-center space-x-3 p-3 rounded-md transition duration-300 bg-gray-200 text-[#881124] hover:bg-white hover:text-[#881124] shadow-md"
@@ -153,7 +153,7 @@ export default function Dashboard() {
           </motion.div>
         </div>
 
-        {/* Shuttle Tracking Table (Bottom Section) */}
+        
         <motion.div
           whileHover={{ scale: 1.02 }}
           className=" rounded-lg shadow-lg  transition duration-300 mt-6"
@@ -176,7 +176,7 @@ export default function Dashboard() {
               </p>
             </div>
 
-            {/* 🔗 Quick Links */}
+           
             <div className="text-center md:text-left">
               <h3 className="text-xl font-bold">Quick Links</h3>
               <ul className="mt-2 space-y-2">
