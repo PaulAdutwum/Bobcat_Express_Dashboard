@@ -8,32 +8,31 @@ import Link from "next/link";
 import Image from "next/image";
 import { FaArrowLeft } from "react-icons/fa";
 
-// ✅ Ensure API Key is Defined
+
 const GOOGLE_MAPS_API_KEY: string =
   process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
 if (!GOOGLE_MAPS_API_KEY) {
   console.error(
-    "❌ Missing Google Maps API Key! Make sure it's set in your .env file."
+    "Missing Google Maps API Key! Make sure it's set in your .env file."
   );
 }
 
-// ✅ Map Configuration
 const MAP_ID = "e9e0cae333b31d7d"; // Replace with your Google Maps Map ID
 const containerStyle = { width: "100%", height: "80vh" };
 const defaultLocation = { lat: 44.1003, lng: -70.2148 };
 
 export default function ShuttleLocation() {
-  // ✅ Load Google Maps API before rendering map
+ 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY ?? "",
   });
 
-  // ✅ State Variables
+ 
   const [location, setLocation] = useState(defaultLocation);
   const [address, setAddress] = useState<string>("Fetching address...");
 
-  // ✅ Fetch Live Shuttle Location from Firestore
+ 
   useEffect(() => {
     const unsub = onSnapshot(doc(db, "drivers", "shuttle-1"), (doc) => {
       if (doc.exists()) {
@@ -49,7 +48,7 @@ export default function ShuttleLocation() {
     return () => unsub(); // Cleanup Firestore listener
   }, []);
 
-  // ✅ Reverse Geocoding to Get Address
+ 
   const fetchAddress = async (lat: number, lng: number) => {
     try {
       const response = await fetch(
@@ -75,10 +74,10 @@ export default function ShuttleLocation() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* ✅ Header Section */}
+     
       <header className="bg-[#881124] text-white py-6 shadow-md">
         <div className="container mx-auto flex justify-between items-center px-6">
-          {/* 📌 Bates Logo */}
+          {/*  Bates Logo */}
           <Image
             src="/bateslogow.png"
             alt="Bates College Logo"
@@ -88,7 +87,7 @@ export default function ShuttleLocation() {
             className="drop-shadow-lg"
           />
 
-          {/* ✅ Navigation Links */}
+         
           <nav className="space-x-6">
             <Link
               href="https://www.bates.edu/campus-safety/bobcat-express-2/#accessible-support-shuttle"
@@ -112,13 +111,13 @@ export default function ShuttleLocation() {
         </div>
       </header>
 
-      {/* ✅ Shuttle Location Display Box */}
+     
       <div className="w-full max-w-4xl mx-auto bg-gray-100 text-gray-900 text-center p-5 rounded-lg shadow-md mt-6 border-2 border-gray-300">
         <p className="text-xl font-semibold">📍 Current Shuttle Location:</p>
         <p className="text-lg text-[#881124] mt-2 font-medium">{address}</p>
       </div>
 
-      {/* ✅ Google Maps Component */}
+      
       <div className="w-full h-[80vh] rounded-lg overflow-hidden shadow-md border border-gray-300 mt-6">
         <GoogleMap
           mapContainerStyle={containerStyle}
@@ -130,7 +129,7 @@ export default function ShuttleLocation() {
             gestureHandling: "greedy",
           }}
         >
-          {/* 🏎️ Moving Car Icon on Map */}
+          
           <MarkerF
             position={location}
             icon={{
@@ -141,7 +140,7 @@ export default function ShuttleLocation() {
         </GoogleMap>
       </div>
 
-      {/* ✅ Footer Section */}
+      {/* Footer Section */}
       <footer className="bg-black text-white py-8 mt-16">
         <div className="container mx-auto grid md:grid-cols-2 gap-8 px-6">
           {/* 🚍 Shuttle Info */}
@@ -156,7 +155,7 @@ export default function ShuttleLocation() {
             </p>
           </div>
 
-          {/* 🔗 Quick Links */}
+          {/*  Quick Links */}
           <div className="text-center md:text-left">
             <h3 className="text-xl font-bold">Quick Links</h3>
             <ul className="mt-2 space-y-2">
@@ -191,7 +190,7 @@ export default function ShuttleLocation() {
           </div>
         </div>
 
-        {/* Copyright */}
+      
         <div className="border-t border-gray-700 mt-6 pt-4 text-center">
           <p className="text-sm text-gray-400">
             © {new Date().getFullYear()} Bobcat Express Shuttle. All rights
