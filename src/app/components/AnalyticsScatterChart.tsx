@@ -13,7 +13,6 @@ import {
   ChartData,
 } from "chart.js";
 
-// ✅ Register Chart.js Components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -23,7 +22,7 @@ ChartJS.register(
   Legend
 );
 
-// ✅ Example Data (Time vs Destinations)
+
 const destinationScatterData: ChartData<"scatter"> = {
   datasets: [
     {
@@ -46,7 +45,7 @@ const destinationScatterData: ChartData<"scatter"> = {
   ],
 };
 
-// ✅ FIX: Explicitly define `options` using `ChartOptions<"scatter">`
+
 const options: ChartOptions<"scatter"> = {
   responsive: true,
   maintainAspectRatio: false,
@@ -60,12 +59,12 @@ const options: ChartOptions<"scatter"> = {
   },
   scales: {
     x: {
-      type: "linear", // ✅ FIX: Ensure this is set for scatter charts
+      type: "linear", 
       title: { display: true, text: "Time of Day (Hours)" },
       ticks: { color: "#333", font: { weight: "bold" } },
     },
     y: {
-      type: "linear", // ✅ FIX: Ensure this is set for scatter charts
+      type: "linear", 
       title: { display: true, text: "Number of Destinations" },
       ticks: { color: "#333", font: { weight: "bold" }, stepSize: 1 },
     },
