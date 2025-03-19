@@ -89,7 +89,7 @@ export default function HomePage() {
           </span>
         </motion.h1>
 
-        {/* ✅ Display Logged-in User (if available) */}
+        {/*  Display Logged-in User (if available) */}
         {user && (
           <p className="text-lg text-gray-700 font-semibold">
             Welcome, <span className="text-[#881124]">{user.email}</span>
