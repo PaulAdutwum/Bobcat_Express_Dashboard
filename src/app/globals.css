@@ -3,19 +3,304 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0F1521;
+  --foreground: #FFFFFF;
+  --batesMaroon: #881124;
+  --batesDark: #1A1A1A;
+  --batesGray: #333333;
+  --batesLightGray: #F5F5F5;
+  --batesBlue: #1E293B;
+  --batesCard: #1A2332;
+  --batesInputBg: #263340;
+  --batesBorder: #324054;
+  --batesMaroonTransparent: rgba(136, 17, 36, 0.3);
+  --batesBorderTransparent: rgba(50, 64, 84, 0.5);
+  
+  /* Consistent color scheme with balanced colors */
+  --primaryColor: #881124;     /* Bates maroon */
+  --secondaryColor: #1E293B;   /* Bates blue */
+  --accentColor1: #3B82F6;     /* Consistent blue */
+  --accentColor2: #10B981;     /* Consistent green */
+  --accentColor3: #F59E0B;     /* Consistent amber/yellow */
+  --accentColor4: #8B5CF6;     /* Consistent purple */
+  --accentColor5: #EC4899;     /* Consistent pink */
+  
+  /* Status colors - using our consistent palette */
+  --statusPending: var(--accentColor3);       /* Amber for pending */
+  --statusActive: var(--accentColor1);        /* Blue for active */
+  --statusCompleted: var(--accentColor2);     /* Green for completed */
+  --statusCancelled: #EF4444;                 /* Red for cancelled */
+  
+  /* Status colors with transparency */
+  --statusPendingBg: rgba(245, 158, 11, 0.15);
+  --statusPendingBorder: rgba(245, 158, 11, 0.3);
+  --statusActiveBg: rgba(59, 130, 246, 0.15);
+  --statusActiveBorder: rgba(59, 130, 246, 0.3);
+  --statusCompletedBg: rgba(16, 185, 129, 0.15);
+  --statusCompletedBorder: rgba(16, 185, 129, 0.3);
+  --statusCancelledBg: rgba(239, 68, 68, 0.15);
+  --statusCancelledBorder: rgba(239, 68, 68, 0.3);
+  
+  /* Font settings for better readability */
+  --fontSans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html, body {
+  background-color: var(--background);
+  color: var(--foreground);
+  min-height: 100vh;
+  font-family: var(--fontSans);
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  /* Accessible focus styles for keyboard navigation */
+  .focus-visible-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--batesMaroon)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)];
+  }
+  
+  /* Particle floating animations for hero section */
+  @keyframes float1 {
+    0% {
+      transform: translateY(0px) translateX(0px);
+      opacity: 0.1;
+    }
+    50% {
+      transform: translateY(-15px) translateX(5px);
+      opacity: 0.3;
+    }
+    100% {
+      transform: translateY(0px) translateX(0px);
+      opacity: 0.1;
+    }
+  }
+  
+  @keyframes float2 {
+    0% {
+      transform: translateY(0px) translateX(0px);
+      opacity: 0.1;
+    }
+    60% {
+      transform: translateY(20px) translateX(-15px);
+      opacity: 0.2;
+    }
+    100% {
+      transform: translateY(0px) translateX(0px);
+      opacity: 0.1;
+    }
+  }
+  
+  @keyframes float3 {
+    0% {
+      transform: translateY(0px) translateX(0px) rotate(0deg);
+      opacity: 0.05;
+    }
+    40% {
+      transform: translateY(-10px) translateX(10px) rotate(5deg);
+      opacity: 0.15;
+    }
+    80% {
+      transform: translateY(10px) translateX(-10px) rotate(-5deg);
+      opacity: 0.1;
+    }
+    100% {
+      transform: translateY(0px) translateX(0px) rotate(0deg);
+      opacity: 0.05;
+    }
+  }
+  
+  .animate-float1 {
+    animation: float1 8s ease-in-out infinite;
+  }
+  
+  .animate-float2 {
+    animation: float2 12s ease-in-out infinite;
+  }
+  
+  .animate-float3 {
+    animation: float3 15s ease-in-out infinite;
+  }
+  
+  /* Radial gradient utility for image blending */
+  .bg-gradient-radial {
+    background-image: radial-gradient(var(--tw-gradient-stops));
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* Custom Input Styles */
+  .dark-input {
+    @apply bg-[var(--batesInputBg)] border border-[var(--batesBorder)] text-white rounded-md px-4 py-3 w-full transition-colors;
+  }
+
+  .dark-input:focus {
+    @apply outline-none border-[var(--batesMaroon)] ring-2;
+    box-shadow: 0 0 0 2px var(--batesMaroonTransparent);
+  }
+
+  .dark-input::placeholder {
+    @apply text-gray-400;
+  }
+  
+  /* Form styles */
+  .form-label {
+    @apply block text-gray-300 mb-2 font-medium;
+  }
+  
+  .form-input {
+    @apply bg-[var(--batesInputBg)] border border-[var(--batesBorder)] text-white rounded-md px-4 py-3 w-full transition-colors focus:outline-none focus:border-[var(--batesMaroon)] focus:ring-2 focus:ring-[var(--batesMaroonTransparent)];
+  }
+  
+  .form-input::placeholder {
+    @apply text-gray-500;
+  }
+  
+  .form-input:disabled {
+    @apply opacity-60 cursor-not-allowed;
+  }
+
+  /* Custom Button Styles */
+  .maroon-button {
+    @apply bg-[var(--batesMaroon)] text-white py-3 px-6 rounded-md font-medium hover:bg-red-800 transition-colors w-full flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--batesMaroon)];
+  }
+
+  /* Card styles */
+  .dark-card {
+    @apply bg-[var(--batesCard)] rounded-lg shadow-lg p-6 border;
+    border-color: var(--batesBorderTransparent);
+  }
+
+  /* Dashboard card styles */
+  .stat-card {
+    @apply bg-[var(--batesCard)] rounded-lg p-4 flex items-center justify-between transition-all;
+    border: 1px solid var(--batesBorderTransparent);
+  }
+
+  .stat-card:hover {
+    border-color: var(--batesBorder);
+  }
+
+  /* Dashboard Ride Statistics Cards */
+  .stats-card {
+    @apply bg-[var(--batesCard)] rounded-lg shadow-md p-5 flex items-start justify-between;
+    border: 1px solid var(--batesBorderTransparent);
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .stats-card:hover {
+    border-color: var(--batesBorder);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+  }
+
+  .stats-card-icon {
+    @apply p-3 rounded-lg flex items-center justify-center;
+  }
+
+  .stats-card-value {
+    @apply text-4xl font-bold text-white mt-1;
+  }
+
+  .stats-card-title {
+    @apply text-lg text-gray-300 font-medium;
+  }
+
+  /* Status styles for consistent display */
+  .status-badge {
+    @apply px-3 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1;
+  }
+
+  .status-pending {
+    background-color: var(--statusPendingBg);
+    color: var(--statusPending);
+    border: 1px solid var(--statusPendingBorder);
+  }
+
+  .status-active {
+    background-color: var(--statusActiveBg);
+    color: var(--statusActive);
+    border: 1px solid var(--statusActiveBorder);
+  }
+
+  .status-completed {
+    background-color: var(--statusCompletedBg);
+    color: var(--statusCompleted);
+    border: 1px solid var(--statusCompletedBorder);
+  }
+
+  .status-cancelled {
+    background-color: var(--statusCancelledBg);
+    color: var(--statusCancelled);
+    border: 1px solid var(--statusCancelledBorder);
+  }
+
+  /* Table styles */
+  .dark-table {
+    @apply w-full divide-y divide-[var(--batesBorder)];
+  }
+
+  .dark-table th {
+    @apply px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider;
+  }
+
+  .dark-table td {
+    @apply px-6 py-4 whitespace-nowrap text-sm text-gray-300;
+  }
+
+  .dark-table tr {
+    @apply bg-[var(--batesCard)];
+  }
+
+  .dark-table tr:hover {
+    @apply bg-opacity-80;
+  }
+  
+  /* Responsive adjustments for mobile */
+  @media (max-width: 640px) {
+    .stats-card {
+      @apply p-4;
+    }
+    
+    .stats-card-value {
+      @apply text-3xl;
+    }
+    
+    .stats-card-title {
+      @apply text-base;
+    }
+    
+    .dark-table th,
+    .dark-table td {
+      @apply px-2 py-2 text-xs;
+    }
+  }
+
+  /* Chart Cards Styling */
+  .chart-card {
+    @apply bg-[var(--batesCard)] p-4 rounded-lg shadow-md border border-[var(--batesBorder)];
+  }
+
+  .chart-title {
+    @apply text-xl font-bold text-white mb-4 px-2;
+  }
+
+  /* Stats Card Styling */
+  .stats-card {
+    @apply bg-[var(--batesCard)] p-5 rounded-lg flex justify-between items-center;
+  }
+
+  .stats-card-title {
+    @apply text-sm text-gray-400 font-medium;
+  }
+
+  .stats-card-value {
+    @apply text-2xl font-bold text-white;
+  }
+
+  .stats-card-icon {
+    @apply p-3 rounded-full;
+  }
 }

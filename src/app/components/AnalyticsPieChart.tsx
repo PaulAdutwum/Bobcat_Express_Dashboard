@@ -6,34 +6,32 @@ import { Chart as ChartJS, ArcElement, Title, Tooltip, Legend } from "chart.js";
 // Register Chart.js components
 ChartJS.register(ArcElement, Title, Tooltip, Legend);
 
-const driverLabels = [
-  "Driver 65",
-  "Driver 66",
-  "Driver 67",
-  "Driver 68",
-  "Driver 69",
-  "Driver 70",
-];
+// Define prop types
+interface PieChartItem {
+  name: string;
+  value: number;
+  color: string;
+}
 
-const driverRides = [15, 20, 30, 10, 25, 12];
+interface AnalyticsPieChartProps {
+  data: PieChartItem[];
+}
 
-export default function AnalyticsPieChart() {
+export default function AnalyticsPieChart({ data }: AnalyticsPieChartProps) {
+  // Map the data to chart format
+  const labels = data.map((item) => item.name);
+  const values = data.map((item) => item.value);
+  const colors = data.map((item) => item.color);
+
   return (
     <Pie
       data={{
-        labels: driverLabels,
+        labels: labels,
         datasets: [
           {
             label: "Number of Rides",
-            data: driverRides,
-            backgroundColor: [
-              "#3B82F6",
-              "#EF4444",
-              "#22C55E",
-              "#EAB308",
-              "#9333EA",
-              "#F97316",
-            ],
+            data: values,
+            backgroundColor: colors,
           },
         ],
       }}
@@ -42,7 +40,7 @@ export default function AnalyticsPieChart() {
         plugins: {
           title: {
             display: true,
-            text: " Driver Ride Distribution",
+            text: "Ride Distribution",
             font: {
               size: 18,
               weight: "bold",

@@ -4,7 +4,7 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// 📌 Firebase Configuration (Loaded from .env.local)
+// 📌 Firebase Configuration
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -13,14 +13,18 @@ const firebaseConfig = {
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
-
 };
 
-// 📌 Initialize Firebase App (Avoid Duplicate Instances)
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+// Only initialize if API key is present to prevent errors during SSR
+const app = (() => {
+  if (typeof window !== "undefined" && firebaseConfig.apiKey) {
+    return getApps().length ? getApp() : initializeApp(firebaseConfig);
+  }
+  return null;
+})();
 
-// 📌 Firebase Services
-export const auth = getAuth(app); // Authentication
-export const googleProvider = new GoogleAuthProvider(); // Google Auth Provider
-export const db = getFirestore(app); // Firestore Database
-export const storage = getStorage(app); // Cloud Storage
+// 📌 Firebase Services (only initialize if app exists)
+export const auth = app ? getAuth(app) : null;
+export const googleProvider = new GoogleAuthProvider();
+export const db = app ? getFirestore(app) : null;
+export const storage = app ? getStorage(app) : null;

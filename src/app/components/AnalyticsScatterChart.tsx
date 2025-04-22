@@ -22,56 +22,62 @@ ChartJS.register(
   Legend
 );
 
+// Define prop types
+interface DataPoint {
+  x: number;
+  y: number;
+  size?: number;
+}
 
-const destinationScatterData: ChartData<"scatter"> = {
-  datasets: [
-    {
-      label: "Shuttle Destinations Over Time",
-      data: [
-        { x: 8, y: 1 },
-        { x: 10, y: 4 },
-        { x: 12, y: 3 },
-        { x: 14, y: 5 },
-        { x: 16, y: 2 },
-        { x: 18, y: 6 },
-        { x: 20, y: 4 },
-        { x: 22, y: 3 },
-        { x: 24, y: 2 },
-      ],
-      backgroundColor: "rgba(75, 192, 192, 0.8)", // Teal Color
-      borderColor: "rgba(75, 192, 192, 1)",
-      borderWidth: 2,
-    },
-  ],
-};
+interface AnalyticsScatterPlotProps {
+  data: DataPoint[];
+  xAxisLabel?: string;
+  yAxisLabel?: string;
+}
 
+export default function AnalyticsScatterPlot({
+  data,
+  xAxisLabel = "Time of Day (Hours)",
+  yAxisLabel = "Number of Destinations",
+}: AnalyticsScatterPlotProps) {
+  const chartData: ChartData<"scatter"> = {
+    datasets: [
+      {
+        label: "Shuttle Data",
+        data: data,
+        backgroundColor: "rgba(75, 192, 192, 0.8)", // Teal Color
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 2,
+        pointRadius: data.map((point) => point.size || 5),
+      },
+    ],
+  };
 
-const options: ChartOptions<"scatter"> = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { display: false },
-    title: {
-      display: true,
-      text: "📍 Time vs Destinations",
-      font: { size: 16 },
+  const options: ChartOptions<"scatter"> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      title: {
+        display: true,
+        text: "Data Distribution",
+        font: { size: 16 },
+      },
     },
-  },
-  scales: {
-    x: {
-      type: "linear", 
-      title: { display: true, text: "Time of Day (Hours)" },
-      ticks: { color: "#333", font: { weight: "bold" } },
+    scales: {
+      x: {
+        type: "linear",
+        title: { display: true, text: xAxisLabel },
+        ticks: { color: "#333", font: { weight: "bold" } },
+      },
+      y: {
+        type: "linear",
+        title: { display: true, text: yAxisLabel },
+        ticks: { color: "#333", font: { weight: "bold" }, stepSize: 1 },
+      },
     },
-    y: {
-      type: "linear", 
-      title: { display: true, text: "Number of Destinations" },
-      ticks: { color: "#333", font: { weight: "bold" }, stepSize: 1 },
-    },
-  },
-};
+  };
 
-export default function AnalyticsScatterPlot() {
   return (
     <div className="w-full h-full rounded-lg shadow-md border border-gray-200">
       {/* Title */}
@@ -81,7 +87,7 @@ export default function AnalyticsScatterPlot() {
 
       {/* Scatter Chart */}
       <div className="w-full h-[400px] md:h-[350px] lg:h-[320px] xl:h-[340px] flex items-center justify-center">
-        <Scatter data={destinationScatterData} options={options} />
+        <Scatter data={chartData} options={options} />
       </div>
 
       {/* Footer Styling */}
