@@ -285,7 +285,7 @@ export default function HomePage() {
         // Redirect based on development mode or email
         if (isAdmin) {
           console.log("Redirecting to admin dashboard");
-          router.push("/dashboard");
+      router.push("/dashboard");
         } else {
           console.log("Redirecting to student dashboard");
           router.push("/student");
@@ -973,8 +973,8 @@ export default function HomePage() {
                     type="submit"
                     disabled={loading}
                     className="w-full py-4 rounded-lg font-medium text-white bg-gradient-to-r from-[var(--batesMaroon)] to-[#a01b1b] hover:from-[#a01b1b] hover:to-[var(--batesMaroon)] transition-all duration-300 flex justify-center items-center"
-                  >
-                    {loading ? (
+                    >
+                      {loading ? (
                       <>
                         <span className="mr-2 animate-spin">
                           <svg

@@ -10,6 +10,7 @@ import {
   Timestamp,
   DocumentData,
   QuerySnapshot,
+  Firestore,
 } from "firebase/firestore";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa";
@@ -48,7 +49,7 @@ export default function UserLogs() {
     try {
       // Proceed with Firestore query if db is available
       const q = query(
-        collection(db, "ride_logs"),
+        collection(db as Firestore, "ride_logs"),
         orderBy("requestTime", "desc")
       );
 

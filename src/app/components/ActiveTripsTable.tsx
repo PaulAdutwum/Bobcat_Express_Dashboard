@@ -305,16 +305,16 @@ export default function RideManagement() {
           (ride) => ride.status === "pending"
         );
         const completedRides = filteredRides.filter(
-          (ride) => ride.status === "completed"
-        );
+        (ride) => ride.status === "completed"
+      );
 
         // Batch update all states at once
         updateRideState(activeRides, pendingRides, completedRides);
-      } catch (error) {
-        console.error("Error loading rides:", error);
-      } finally {
-        setIsLoading(false);
-      }
+    } catch (error) {
+      console.error("Error loading rides:", error);
+    } finally {
+      setIsLoading(false);
+    }
     },
     [filterRides, updateRideState, isMounted]
   );
@@ -527,18 +527,18 @@ export default function RideManagement() {
   // Move ride to completed - optimized for immediate visual feedback
   const moveToCompleted = useCallback(
     async (ride: Ride, fromStatus: string) => {
-      // Set loading state
-      setActionLoading(ride.id);
+    // Set loading state
+    setActionLoading(ride.id);
 
-      try {
+    try {
         // Mark the ride ID as seen to prevent it from reappearing
         addSeenRideId(ride.id);
 
         // Create a completed ride with complete data
-        const completedRide: Ride = {
-          ...ride,
-          status: "completed",
-          completed_at: new Date().toISOString(),
+      const completedRide: Ride = {
+        ...ride,
+        status: "completed",
+        completed_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         };
 
@@ -552,14 +552,14 @@ export default function RideManagement() {
         let newPendingRides = currentPendingRides;
         let newCompletedRides = currentCompletedRides;
 
-        // First update the UI state
-        if (fromStatus === "pending") {
+      // First update the UI state
+      if (fromStatus === "pending") {
           newPendingRides = currentPendingRides.filter((r) => r.id !== ride.id);
-        } else if (fromStatus === "active") {
+      } else if (fromStatus === "active") {
           newActiveRides = currentActiveRides.filter((r) => r.id !== ride.id);
-        }
+      }
 
-        // Add to completed rides at the top of the list
+      // Add to completed rides at the top of the list
         newCompletedRides = [
           completedRide,
           ...currentCompletedRides.filter((r) => r.id !== completedRide.id),
@@ -568,9 +568,9 @@ export default function RideManagement() {
         // Apply all state updates in a batch
         updateRideState(newActiveRides, newPendingRides, newCompletedRides);
 
-        // Highlight the newly added ride
-        setLastCompletedRideId(ride.id);
-        setTimeout(() => setLastCompletedRideId(null), 3000);
+      // Highlight the newly added ride
+      setLastCompletedRideId(ride.id);
+      setTimeout(() => setLastCompletedRideId(null), 3000);
 
         // Auto-scroll to completed rides section
         if (completedSectionRef.current) {
@@ -616,13 +616,13 @@ export default function RideManagement() {
             );
           }
         }
-      } catch (error) {
-        console.error("Error in moveToCompleted:", error);
+    } catch (error) {
+      console.error("Error in moveToCompleted:", error);
         // Show error to user
         alert("There was an error completing this ride. Please try again.");
-      } finally {
-        setActionLoading(null);
-      }
+    } finally {
+      setActionLoading(null);
+    }
     },
     [updateRideState]
   );
@@ -823,34 +823,34 @@ export default function RideManagement() {
   // Shared refresh button component
   const RefreshButton = () => (
     <div className="flex space-x-2">
-      <button
-        onClick={() => {
-          setIsLoading(true);
-          loadRides().finally(() => setIsLoading(false));
-        }}
-        className="bg-batesBlue hover:bg-batesBlue/80 text-white py-2 px-4 rounded-md text-sm font-medium flex items-center"
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <FaSpinner className="animate-spin mr-2" />
-        ) : (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 mr-2"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-            />
-          </svg>
-        )}
-        Refresh
-      </button>
+    <button
+      onClick={() => {
+        setIsLoading(true);
+        loadRides().finally(() => setIsLoading(false));
+      }}
+      className="bg-batesBlue hover:bg-batesBlue/80 text-white py-2 px-4 rounded-md text-sm font-medium flex items-center"
+      disabled={isLoading}
+    >
+      {isLoading ? (
+        <FaSpinner className="animate-spin mr-2" />
+      ) : (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-4 w-4 mr-2"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+          />
+        </svg>
+      )}
+      Refresh
+    </button>
 
       <button
         onClick={toggleFreshStart}
