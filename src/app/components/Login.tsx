@@ -34,9 +34,16 @@ export default function Login() {
     setError(""); // Reset error
 
     try {
+      // Check if auth is initialized before using it
+      if (!auth) {
+        setError("Authentication service is not available");
+        return;
+      }
+
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/dashboard"); // Redirect to Dashboard
-    } catch {
+    } catch (error) {
+      console.error("Login error:", error);
       setError("Invalid email or password. Please try again.");
     }
   };
@@ -44,10 +51,17 @@ export default function Login() {
   // Google Sign-In
   const handleGoogleSignIn = async () => {
     try {
+      // Check if auth is initialized before using it
+      if (!auth) {
+        setError("Authentication service is not available");
+        return;
+      }
+
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
       router.push("/dashboard"); // Redirect to Dashboard
-    } catch {
+    } catch (error) {
+      console.error("Google sign-in error:", error);
       setError("Google Sign-In failed. Try again.");
     }
   };
@@ -111,7 +125,7 @@ export default function Login() {
 
         {/* Signup Link */}
         <p className="text-center text-gray-600 mt-4">
-          Don’t have an account?{" "}
+          Don't have an account?{" "}
           <Link
             href="/signup"
             className="text-[#881124] hover:text-red-600 transition duration-300"

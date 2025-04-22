@@ -8,10 +8,11 @@ import {
   onSnapshot,
   orderBy,
   Timestamp,
+  DocumentData,
+  QuerySnapshot,
 } from "firebase/firestore";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa";
-
 
 type UserLog = {
   id: string;
@@ -19,7 +20,7 @@ type UserLog = {
   email: string;
   origin: string;
   destination: string;
-  requestTime: Timestamp; 
+  requestTime: Timestamp;
   status: string;
   totalRides: number;
 };
@@ -30,23 +31,46 @@ const tableStyles =
 
 export default function UserLogs() {
   const [logs, setLogs] = useState<UserLog[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch ride logs from Firestore
   useEffect(() => {
-    const q = query(
-      collection(db, "ride_logs"),
-      orderBy("requestTime", "desc")
-    );
+    // Check if db is initialized
+    if (!db) {
+      console.warn("Firebase Firestore is not initialized.");
+      setError("Database connection unavailable");
+      return () => {}; // Return empty cleanup function
+    }
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const rideData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...(doc.data() as Omit<UserLog, "id">), 
-      }));
-      setLogs(rideData);
-    });
+    // Proceed with Firestore query if db is available
+    try {
+      const q = query(
+        collection(db, "ride_logs"),
+        orderBy("requestTime", "desc")
+      );
 
-    return () => unsubscribe();
+      const unsubscribe = onSnapshot(
+        q,
+        (snapshot: QuerySnapshot<DocumentData>) => {
+          const rideData = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...(doc.data() as Omit<UserLog, "id">),
+          }));
+          setLogs(rideData);
+          setError(null); // Clear any previous errors
+        },
+        (err) => {
+          console.error("Firestore snapshot error:", err);
+          setError("Unable to load ride logs");
+        }
+      );
+
+      return () => unsubscribe();
+    } catch (err) {
+      console.error("Error setting up Firestore query:", err);
+      setError("An error occurred while connecting to the database");
+      return () => {}; // Return empty cleanup function
+    }
   }, []);
 
   return (
@@ -68,6 +92,12 @@ export default function UserLogs() {
         <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
           📜 Recent Ride Requests
         </h2>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded">
+            {error}
+          </div>
+        )}
 
         <div className="overflow-x-auto">
           <table className="w-full border-collapse border border-gray-300">
@@ -112,7 +142,7 @@ export default function UserLogs() {
               ) : (
                 <tr>
                   <td colSpan={7} className="p-4 text-center text-gray-500">
-                    No ride logs available.
+                    {error ? "Error loading data" : "No ride logs available."}
                   </td>
                 </tr>
               )}
