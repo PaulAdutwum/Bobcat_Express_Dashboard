@@ -63,8 +63,18 @@ export default function GoogleMapComponent() {
 
   // Fetch Initial Shuttle Location from Firestore
   useEffect(() => {
-    async function fetchData() {
+    let unsubscribe: (() => void) | null = null;
+
+    // Function to handle Firestore operations
+    async function setupFirestore() {
       try {
+        // Check if db is initialized
+        if (!db) {
+          console.warn("Firebase Firestore is not initialized.");
+          return;
+        }
+
+        // Get initial data
         const docRef = doc(db, "drivers", "shuttle-1");
         const docSnap = await getDoc(docRef);
 
@@ -78,26 +88,32 @@ export default function GoogleMapComponent() {
         } else {
           console.log("No shuttle data found in Firestore!");
         }
+
+        // Set up real-time updates
+        unsubscribe = onSnapshot(docRef, (doc) => {
+          if (doc.exists()) {
+            const data = doc.data();
+            console.log("Real-time update:", data);
+            if (data?.lat !== undefined && data?.lng !== undefined) {
+              setLocation({ lat: data.lat, lng: data.lng });
+              fetchAddress(data.lat, data.lng);
+            }
+          }
+        });
       } catch (error) {
-        console.error("Error fetching initial data:", error);
+        console.error("Error in Firestore setup:", error);
       }
     }
 
-    fetchData();
+    // Call the async function immediately
+    setupFirestore();
 
-    // Subscribe to Firestore updates
-    const unsub = onSnapshot(doc(db, "drivers", "shuttle-1"), (doc) => {
-      if (doc.exists()) {
-        const data = doc.data();
-        console.log("Real-time update:", data);
-        if (data?.lat !== undefined && data?.lng !== undefined) {
-          setLocation({ lat: data.lat, lng: data.lng });
-          fetchAddress(data.lat, data.lng);
-        }
+    // Return cleanup function
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
       }
-    });
-
-    return () => unsub();
+    };
   }, []);
 
   // Reverse Geocoding to Get Address
