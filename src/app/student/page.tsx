@@ -7,11 +7,21 @@ import { User } from "firebase/auth";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { FaShuttleVan, FaHistory, FaMapMarkedAlt } from "react-icons/fa";
-import StudentChat from "../components/StudentChat";
+import StudentChatFallback from "../components/StudentChatFallback";
 
 export default function StudentHomePage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Function to check cookie
+  const getCookie = (name: string): string | null => {
+    if (typeof document === "undefined") return null;
+    const match = document.cookie.match(
+      new RegExp("(^| )" + name + "=([^;]+)")
+    );
+    return match ? match[2] : null;
+  };
 
   useEffect(() => {
     if (!auth) return;
@@ -21,11 +31,28 @@ export default function StudentHomePage() {
         router.push("/");
       } else {
         setUser(currentUser);
+        // Check if user is an admin
+        const isAdmin = getCookie("admin") === "true";
+
+        if (isAdmin) {
+          // If admin, redirect to dashboard
+          console.log("Admin user detected, redirecting to dashboard");
+          router.push("/dashboard");
+        }
       }
+      setIsLoading(false);
     });
 
     return () => unsubscribe();
   }, [router]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-batesMaroon"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -94,7 +121,7 @@ export default function StudentHomePage() {
       </div>
 
       {user && (
-        <StudentChat
+        <StudentChatFallback
           userEmail={user.email || ""}
           userName={user.displayName || user.email || ""}
         />

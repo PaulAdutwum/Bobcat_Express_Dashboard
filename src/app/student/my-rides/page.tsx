@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { auth } from "@/lib/firebase";
 import { User } from "firebase/auth";
@@ -34,22 +34,35 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// Create a client component for search params handling
+function SearchParamsHandler({
+  onSuccess,
+}: {
+  onSuccess: (success: boolean) => void;
+}) {
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams?.get("success") === "true") {
+      onSuccess(true);
+    }
+  }, [searchParams, onSuccess]);
+
+  return null;
+}
+
 export default function MyRidesPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [rides, setRides] = useState<Ride[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Handle hydration - set isHydrated to true and safely access search params
+  // Handle hydration - set isHydrated to true
   useEffect(() => {
     setIsHydrated(true);
-    if (searchParams?.get("success") === "true") {
-      setShowSuccess(true);
-    }
-  }, [searchParams]);
+  }, []);
 
   useEffect(() => {
     if (!auth || !isHydrated) return;
@@ -234,108 +247,118 @@ export default function MyRidesPage() {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold text-white mb-6">My Rides</h1>
+    <div className="min-h-screen bg-gray-900">
+      {/* Wrap search params usage in Suspense */}
+      <Suspense fallback={null}>
+        <SearchParamsHandler onSuccess={setShowSuccess} />
+      </Suspense>
 
-      {showSuccess && (
-        <div className="bg-green-500/20 border border-green-500/30 text-green-300 p-4 rounded-lg mb-6 flex items-center">
-          <FaCheckCircle className="mr-2" />
-          Your ride request has been submitted successfully!
-        </div>
-      )}
+      <div className="p-6 max-w-6xl mx-auto">
+        <h1 className="text-2xl font-bold text-white mb-6">My Rides</h1>
 
-      {loading ? (
-        <div className="text-center p-12">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-batesMaroon border-r-transparent align-[-0.125em]"></div>
-          <p className="mt-2 text-white">Loading your rides...</p>
-        </div>
-      ) : rides.length === 0 ? (
-        <div className="bg-[var(--batesCard)] rounded-lg p-12 border border-[var(--batesBorder)] text-center">
-          <FaCar className="mx-auto text-4xl text-gray-500 mb-4" />
-          <h2 className="text-xl text-white mb-2">No Rides Yet</h2>
-          <p className="text-gray-400 mb-4">
-            You haven't requested any rides yet.
-          </p>
-          <button
-            onClick={() => router.push("/student/request-ride")}
-            className="bg-batesMaroon text-white px-4 py-2 rounded-lg hover:bg-batesMaroon/90 transition-colors"
-          >
-            Request a Ride
-          </button>
-        </div>
-      ) : (
-        <div className="bg-[var(--batesCard)] rounded-lg border border-[var(--batesBorder)] overflow-hidden">
-          {/* Desktop view */}
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-white">
-              <thead className="bg-[var(--batesBlue)]">
-                <tr>
-                  <th className="p-4 text-left">Date</th>
-                  <th className="p-4 text-left">From</th>
-                  <th className="p-4 text-left">To</th>
-                  <th className="p-4 text-left">Passengers</th>
-                  <th className="p-4 text-left">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--batesBorder)]">
-                {rides.map((ride) => (
-                  <tr key={ride.id} className="hover:bg-[var(--batesBlue)]/20">
-                    <td className="p-4">{formatDate(ride.created_at)}</td>
-                    <td className="p-4">{ride.pickup_location}</td>
-                    <td className="p-4">{ride.destination}</td>
-                    <td className="p-4">{ride.passengers}</td>
-                    <td className="p-4">{getStatusBadge(ride.status)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {showSuccess && (
+          <div className="bg-green-500/20 border border-green-500/30 text-green-300 p-4 rounded-lg mb-6 flex items-center">
+            <FaCheckCircle className="mr-2" />
+            Your ride request has been submitted successfully!
           </div>
+        )}
 
-          {/* Mobile view - card style */}
-          <div className="md:hidden">
-            <div className="divide-y divide-[var(--batesBorder)]">
-              {rides.map((ride) => (
-                <div
-                  key={ride.id}
-                  className="p-4 hover:bg-[var(--batesBlue)]/20 transition-colors"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="text-gray-400 text-sm">
-                      {formatDate(ride.created_at)}
-                    </span>
-                    {getStatusBadge(ride.status)}
-                  </div>
+        {loading ? (
+          <div className="text-center p-12">
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-batesMaroon border-r-transparent align-[-0.125em]"></div>
+            <p className="mt-2 text-white">Loading your rides...</p>
+          </div>
+        ) : rides.length === 0 ? (
+          <div className="bg-[var(--batesCard)] rounded-lg p-12 border border-[var(--batesBorder)] text-center">
+            <FaCar className="mx-auto text-4xl text-gray-500 mb-4" />
+            <h2 className="text-xl text-white mb-2">No Rides Yet</h2>
+            <p className="text-gray-400 mb-4">
+              You haven't requested any rides yet.
+            </p>
+            <button
+              onClick={() => router.push("/student/request-ride")}
+              className="bg-batesMaroon text-white px-4 py-2 rounded-lg hover:bg-batesMaroon/90 transition-colors"
+            >
+              Request a Ride
+            </button>
+          </div>
+        ) : (
+          <div className="bg-[var(--batesCard)] rounded-lg border border-[var(--batesBorder)] overflow-hidden">
+            {/* Desktop view */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-white">
+                <thead className="bg-[var(--batesBlue)]">
+                  <tr>
+                    <th className="p-4 text-left">Date</th>
+                    <th className="p-4 text-left">From</th>
+                    <th className="p-4 text-left">To</th>
+                    <th className="p-4 text-left">Passengers</th>
+                    <th className="p-4 text-left">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--batesBorder)]">
+                  {rides.map((ride) => (
+                    <tr
+                      key={ride.id}
+                      className="hover:bg-[var(--batesBlue)]/20"
+                    >
+                      <td className="p-4">{formatDate(ride.created_at)}</td>
+                      <td className="p-4">{ride.pickup_location}</td>
+                      <td className="p-4">{ride.destination}</td>
+                      <td className="p-4">{ride.passengers}</td>
+                      <td className="p-4">{getStatusBadge(ride.status)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-                  <div className="grid grid-cols-2 gap-2 mt-3">
-                    <div>
-                      <p className="text-gray-400 text-xs">From</p>
-                      <p className="text-white">{ride.pickup_location}</p>
+            {/* Mobile view - card style */}
+            <div className="md:hidden">
+              <div className="divide-y divide-[var(--batesBorder)]">
+                {rides.map((ride) => (
+                  <div
+                    key={ride.id}
+                    className="p-4 hover:bg-[var(--batesBlue)]/20 transition-colors"
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="text-gray-400 text-sm">
+                        {formatDate(ride.created_at)}
+                      </span>
+                      {getStatusBadge(ride.status)}
                     </div>
-                    <div>
-                      <p className="text-gray-400 text-xs">To</p>
-                      <p className="text-white">{ride.destination}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-400 text-xs">Passengers</p>
-                      <p className="text-white">{ride.passengers}</p>
+
+                    <div className="grid grid-cols-2 gap-2 mt-3">
+                      <div>
+                        <p className="text-gray-400 text-xs">From</p>
+                        <p className="text-white">{ride.pickup_location}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-400 text-xs">To</p>
+                        <p className="text-white">{ride.destination}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-400 text-xs">Passengers</p>
+                        <p className="text-white">{ride.passengers}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Quick action button for mobile */}
-      <div className="fixed bottom-6 right-6 md:hidden">
-        <button
-          onClick={() => router.push("/student/request-ride")}
-          className="bg-batesMaroon text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
-          aria-label="Request new ride"
-        >
-          <FaShuttleVan size={24} />
-        </button>
+        {/* Quick action button for mobile */}
+        <div className="fixed bottom-6 right-6 md:hidden">
+          <button
+            onClick={() => router.push("/student/request-ride")}
+            className="bg-batesMaroon text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
+            aria-label="Request new ride"
+          >
+            <FaShuttleVan size={24} />
+          </button>
+        </div>
       </div>
     </div>
   );

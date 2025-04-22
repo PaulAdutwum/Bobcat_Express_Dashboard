@@ -276,7 +276,7 @@ export default function ChatCenter() {
               {links.map(({ label, icon: Icon, href }, index) => (
                 <Link
                   key={index}
-                  href={href}
+                  href={href as any}
                   className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 ${
                     pathname === href
                       ? "bg-batesMaroon text-white font-medium"

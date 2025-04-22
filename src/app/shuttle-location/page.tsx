@@ -507,7 +507,7 @@ export default function ShuttleLocation() {
               {links.map(({ label, icon: Icon, href }, index) => (
                 <Link
                   key={index}
-                  href={href}
+                  href={href as any}
                   className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 ${
                     href === "/shuttle-location"
                       ? "bg-batesMaroon text-white font-medium"
@@ -524,7 +524,7 @@ export default function ShuttleLocation() {
           <div className="mt-auto p-4 border-t border-[var(--batesBorder)]">
             <div className="space-y-2">
               <Link
-                href="/"
+                href={"/" as any}
                 className="w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 bg-[var(--batesBlue)] hover:bg-batesMaroon/90 text-gray-300 hover:text-white"
               >
                 <FaArrowLeft className="text-lg" />

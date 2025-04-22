@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -13,6 +13,7 @@
     "@supabase/supabase-js": "^2.49.4",
     "chart.js": "^4.4.8",
     "date-fns": "^4.1.0",
+    "dotenv": "^16.5.0",
     "firebase": "^11.3.1",
     "framer-motion": "^12.4.7",
     "next": "15.1.7",

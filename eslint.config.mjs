@@ -22,8 +22,9 @@ eslintConfig.push({
     "@typescript-eslint/prefer-as-const": "off",
     "no-console": "off",
   },
-  eslint: {
-    ignoreDuringBuilds: true, // Make sure builds don't fail due to ESLint errors
+  linterOptions: {
+    reportUnusedDisableDirectives: true,
+    noInlineConfig: false,
   },
 });
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
@@ -42,6 +42,11 @@ import { signInWithPopup, User } from "firebase/auth";
 import { createClient } from "@supabase/supabase-js";
 import { createRide } from "@/lib/supabase";
 import { locations } from "@/lib/constants";
+import {
+  fetchActiveRides,
+  fetchPendingRides,
+  fetchCompletedRides,
+} from "@/lib/supabase";
 
 // Safely handle localStorage operations
 const safeLocalStorage = {
@@ -78,7 +83,7 @@ const shuttleLocations: ShuttleLocationOption[] = locations.map(
   })
 );
 
-// Define Ride type locally to avoid import issues
+// Define Ride type locally
 interface Ride {
   id: string;
   student_name: string;
@@ -91,12 +96,85 @@ interface Ride {
   completed_at?: string;
   archived_at?: string;
   user_email?: string;
+  special_instructions?: string;
 }
 
 // Create Supabase client directly
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Local implementation for fetchRidesByEmail
+async function fetchRidesByEmail(email: string): Promise<Ride[]> {
+  console.log(`Fetching rides for user with email: ${email}`);
+  try {
+    // Since user_email doesn't exist as a column, we search in special_instructions
+    const { data, error } = await supabase
+      .from("rides")
+      .select("*")
+      .ilike("special_instructions", `%${email}%`)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching rides by email:", error);
+      return [];
+    }
+
+    // Filter results to ensure we only get rides with this exact email
+    const filteredData =
+      data?.filter((ride) =>
+        ride.special_instructions?.includes(
+          `User Email: ${email.trim().toLowerCase()}`
+        )
+      ) || [];
+
+    console.log(`Found ${filteredData.length} rides for email ${email}`);
+    return filteredData as Ride[];
+  } catch (error) {
+    console.error("Exception in fetchRidesByEmail:", error);
+    return [];
+  }
+}
+
+// Local implementation for subscribeToRidesByEmail
+function subscribeToRidesByEmail(
+  email: string,
+  callback: (updatedRides: Ride[]) => void
+) {
+  console.log(`Setting up subscription for rides (email: ${email})`);
+
+  // Create a unique channel name based on the email
+  const channelName = `rides-by-email-${email.replace(/[^a-zA-Z0-9]/g, "-")}`;
+
+  // Subscribe to all ride changes and filter in code
+  const subscription = supabase
+    .channel(channelName)
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "rides",
+      },
+      async () => {
+        console.log(
+          `Received real-time update for rides, checking if relevant to ${email}`
+        );
+
+        // When changes occur, fetch the updated list filtered by email
+        const rides = await fetchRidesByEmail(email);
+
+        // Only trigger callback if we have matching rides
+        if (rides.length > 0) {
+          callback(rides);
+        }
+      }
+    )
+    .subscribe();
+
+  console.log(`Subscription active for rides (filtered by email: ${email})`);
+  return subscription;
+}
 
 // Define a type for the stats object
 interface StatsData {
@@ -129,9 +207,25 @@ type InputChangeEvent = React.ChangeEvent<
   HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
 >;
 
+// Define a client component that uses searchParams
+function SearchParamsHandler({
+  onSuccess,
+}: {
+  onSuccess: (success: boolean) => void;
+}) {
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams && searchParams.get("success") === "true") {
+      onSuccess(true);
+    }
+  }, [searchParams, onSuccess]);
+
+  return null;
+}
+
 export default function HomePage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [currentStats, setCurrentStats] = useState<StatsData>(initialStats);
@@ -147,12 +241,7 @@ export default function HomePage() {
     setIsHydrated(true);
     // Update to random stats only after hydration
     setCurrentStats(getRandomStats());
-
-    // Safely access search params after hydration
-    if (searchParams && searchParams.get("success") === "true") {
-      setShowSuccessMessage(true);
-    }
-  }, [searchParams]);
+  }, []);
 
   useEffect(() => {
     if (auth) {
@@ -263,29 +352,33 @@ export default function HomePage() {
 
       // Store user's email in a cookie for admin recognition
       if (result.user.email) {
-        document.cookie = `user_email=${result.user.email}; path=/; max-age=864000; SameSite=Lax`;
+        const userEmail = result.user.email.trim().toLowerCase();
+        document.cookie = `user_email=${userEmail}; path=/; max-age=864000; SameSite=Lax`;
         document.cookie = `auth=true; path=/; max-age=864000; SameSite=Lax`;
 
         // Log for debugging
-        console.log(`Signed in with email: ${result.user.email}`);
-        console.log(
-          `Is admin check: ${result.user.email === "padutwum@bates.edu"}`
-        );
+        console.log(`Signed in with email: ${userEmail}`);
 
-        // For development: enable admin access for any @bates.edu email
-        const isBatesEmail = result.user.email.endsWith("@bates.edu");
-        const isAdmin =
-          result.user.email === "padutwum@bates.edu" || isBatesEmail;
+        // Only give admin access to padutwum@bates.edu
+        const isExactAdminEmail = userEmail === "padutwum@bates.edu";
+        const isAdmin = isExactAdminEmail;
+
+        console.log(`User is exact admin: ${isExactAdminEmail}`);
+        console.log(`Final admin status: ${isAdmin}`);
 
         // Store admin status in cookie
         if (isAdmin) {
           document.cookie = `admin=true; path=/; max-age=864000; SameSite=Lax`;
+          console.log("Admin cookie set successfully");
         }
 
-        // Redirect based on development mode or email
+        // Redirect based on admin status
         if (isAdmin) {
           console.log("Redirecting to admin dashboard");
-      router.push("/dashboard");
+          // Add a small delay to ensure cookies are set before redirect
+          setTimeout(() => {
+            router.push("/dashboard");
+          }, 100);
         } else {
           console.log("Redirecting to student dashboard");
           router.push("/student");
@@ -295,11 +388,15 @@ export default function HomePage() {
       console.error("Login Error:", error);
       // Allow fallback login for development
       alert(
-        "Login failed. For development, you'll be redirected to the dashboard anyway."
+        "Login failed. For development, you'll be redirected to the student dashboard."
       );
       document.cookie = `auth=true; path=/; max-age=864000; SameSite=Lax`;
-      document.cookie = `admin=true; path=/; max-age=864000; SameSite=Lax`;
-      router.push("/dashboard");
+      document.cookie = `user_email=dev-student@example.com; path=/; max-age=864000; SameSite=Lax`;
+
+      console.log("Using development fallback login");
+      setTimeout(() => {
+        router.push("/student");
+      }, 100);
     } finally {
       setLoading(false);
     }
@@ -387,30 +484,19 @@ export default function HomePage() {
 
       console.log(`Fetching rides for user with email: ${email}`);
 
-      // Make sure email is properly encoded for the query
+      // Make sure email is properly sanitized
       const sanitizedEmail = email.trim().toLowerCase();
 
-      // Direct Supabase query with improved error handling
-      const { data, error } = await supabase
-        .from("rides")
-        .select("*")
-        .eq("user_email", sanitizedEmail)
-        .order("created_at", { ascending: false });
+      // Use the proper fetchRidesByEmail function which knows how to query by email
+      // instead of directly querying a non-existent user_email column
+      const ridesData = await fetchRidesByEmail(sanitizedEmail);
 
-      if (error) {
-        console.error("Error fetching rides by email:", error);
-        // For development purposes, log the full error object
-        console.log("Full error object:", JSON.stringify(error));
-        setRides([]);
-      } else {
-        console.log(
-          `Successfully fetched ${data?.length || 0} rides for ${email}`
-        );
-        setRides(data || []);
-      }
+      console.log(
+        `Successfully fetched ${ridesData?.length || 0} rides for ${email}`
+      );
+      setRides(ridesData || []);
     } catch (error) {
       console.error("Exception in loadRides:", error);
-      // For development purposes, return mock data if needed
       console.log("Providing empty rides array due to exception");
       setRides([]);
     }
@@ -423,35 +509,14 @@ export default function HomePage() {
     const email = user.email.trim().toLowerCase();
     console.log(`Setting up subscription for rides with email: ${email}`);
 
-    // Create a unique channel name based on the email (avoid special characters)
-    const channelName = `rides-by-email-${email.replace(/[^a-zA-Z0-9]/g, "-")}`;
-
     try {
-      // Set up subscription directly with Supabase with improved filter syntax
-      const subscription = supabase
-        .channel(channelName)
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "rides",
-            filter: `user_email=eq.${email}`,
-          },
-          async (payload) => {
-            console.log(
-              `Received real-time update for ${email}'s rides:`,
-              payload
-            );
-            // When changes occur, reload the rides - prevent errors by checking if component is still mounted
-            if (user?.email) {
-              await loadRides(email);
-            }
-          }
-        )
-        .subscribe((status) => {
-          console.log(`Subscription status for ${channelName}: ${status}`);
-        });
+      // Use the proper subscription function that knows how to filter by email in special_instructions
+      const subscription = subscribeToRidesByEmail(email, (updatedRides) => {
+        console.log(
+          `Received real-time update with ${updatedRides.length} rides for ${email}`
+        );
+        setRides(updatedRides);
+      });
 
       console.log(`Subscription active for ${email}'s rides`);
 
@@ -508,6 +573,13 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen font-sans bg-black text-white">
+      {/* Wrap searchParams usage in Suspense */}
+      <Suspense fallback={null}>
+        <SearchParamsHandler
+          onSuccess={(success) => setShowSuccessMessage(success)}
+        />
+      </Suspense>
+
       {/* Header with glass morphism effect */}
       <header className="bg-batesDark shadow-xl sticky top-0 z-50">
         <div className="container mx-auto flex justify-between items-center px-6 py-4">
@@ -973,8 +1045,8 @@ export default function HomePage() {
                     type="submit"
                     disabled={loading}
                     className="w-full py-4 rounded-lg font-medium text-white bg-gradient-to-r from-[var(--batesMaroon)] to-[#a01b1b] hover:from-[#a01b1b] hover:to-[var(--batesMaroon)] transition-all duration-300 flex justify-center items-center"
-                    >
-                      {loading ? (
+                  >
+                    {loading ? (
                       <>
                         <span className="mr-2 animate-spin">
                           <svg

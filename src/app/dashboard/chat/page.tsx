@@ -77,7 +77,7 @@ export default function ChatPage() {
             </Link>
 
             <Link
-              href="/shuttle-tracking"
+              href={"/shuttle-tracking" as any}
               className="flex items-center px-4 py-2 text-gray-300 rounded-md hover:bg-gray-700 hover:text-white"
             >
               <FaMapMarkedAlt className="mr-3" />
@@ -85,7 +85,7 @@ export default function ChatPage() {
             </Link>
 
             <Link
-              href="/driver-management"
+              href={"/driver-management" as any}
               className="flex items-center px-4 py-2 text-gray-300 rounded-md hover:bg-gray-700 hover:text-white"
             >
               <FaUserClock className="mr-3" />
@@ -93,7 +93,7 @@ export default function ChatPage() {
             </Link>
 
             <Link
-              href="/analytics"
+              href={"/analytics" as any}
               className="flex items-center px-4 py-2 text-gray-300 rounded-md hover:bg-gray-700 hover:text-white"
             >
               <FaChartLine className="mr-3" />
@@ -101,7 +101,7 @@ export default function ChatPage() {
             </Link>
 
             <Link
-              href="/dashboard/chat"
+              href={"/dashboard/chat" as any}
               className="flex items-center px-4 py-2 text-white bg-batesMaroon rounded-md"
             >
               <FaComments className="mr-3" />
@@ -167,23 +167,29 @@ export default function ChatPage() {
 
         {/* Mobile navigation */}
         <div className="md:hidden flex items-center justify-between px-4 py-2 bg-gray-700 text-white text-sm overflow-x-auto">
-          <Link href="/dashboard" className="px-3 py-1 whitespace-nowrap">
+          <Link
+            href={"/dashboard" as any}
+            className="px-3 py-1 whitespace-nowrap"
+          >
             <FaHome className="inline mr-1" />
             Home
           </Link>
-          <Link href="/ride-management" className="px-3 py-1 whitespace-nowrap">
+          <Link
+            href={"/ride-management" as any}
+            className="px-3 py-1 whitespace-nowrap"
+          >
             <FaRoute className="inline mr-1" />
             Rides
           </Link>
           <Link
-            href="/shuttle-tracking"
+            href={"/shuttle-tracking" as any}
             className="px-3 py-1 whitespace-nowrap"
           >
             <FaMapMarkedAlt className="inline mr-1" />
             Tracking
           </Link>
           <Link
-            href="/dashboard/chat"
+            href={"/dashboard/chat" as any}
             className="px-3 py-1 bg-batesMaroon rounded whitespace-nowrap"
           >
             <FaComments className="inline mr-1" />

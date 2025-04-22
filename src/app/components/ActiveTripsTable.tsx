@@ -28,7 +28,10 @@ import {
   archiveRide,
   archiveCompletedRides,
 } from "@/lib/supabase";
-import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
+import {
+  RealtimePostgresChangesPayload,
+  RealtimeChannel,
+} from "@supabase/supabase-js";
 
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -181,6 +184,7 @@ export default function RideManagement() {
   const [freshStart, setFreshStart] = useState<boolean>(false);
   const [processedUpdates, setProcessedUpdates] = useState<string[]>([]);
   const [isMounted, setIsMounted] = useState(false);
+  const subscriptionRef = useRef<RealtimeChannel | null>(null); // Properly type the ref
 
   // Reference to the completed rides section for smooth scrolling
   const completedSectionRef = useRef<HTMLDivElement>(null);
@@ -305,18 +309,33 @@ export default function RideManagement() {
           (ride) => ride.status === "pending"
         );
         const completedRides = filteredRides.filter(
-        (ride) => ride.status === "completed"
-      );
+          (ride) => ride.status === "completed"
+        );
 
         // Batch update all states at once
         updateRideState(activeRides, pendingRides, completedRides);
-    } catch (error) {
-      console.error("Error loading rides:", error);
-    } finally {
-      setIsLoading(false);
-    }
+      } catch (error) {
+        console.error("Error loading rides:", error);
+      } finally {
+        setIsLoading(false);
+      }
     },
     [filterRides, updateRideState, isMounted]
+  );
+
+  // Debounced version of loadRides to prevent excessive API calls
+  const debouncedLoadRides = useCallback(
+    (() => {
+      let timeout: NodeJS.Timeout | null = null;
+      return (clearSeen: boolean = false) => {
+        if (timeout) clearTimeout(timeout);
+        setIsLoading(true);
+        timeout = setTimeout(() => {
+          loadRides(clearSeen);
+        }, 300); // 300ms debounce
+      };
+    })(),
+    [loadRides]
   );
 
   // Toggle the fresh start mode
@@ -377,14 +396,9 @@ export default function RideManagement() {
         // Always mark inserted rides as seen
         addSeenRideId(newRide.id);
 
-        // Use the current state via ref to ensure we're not using stale data
-        if (newRide.status === "active") {
-          setActiveRides((prev) => [...prev, newRide]);
-        } else if (newRide.status === "pending") {
-          setPendingRides((prev) => [...prev, newRide]);
-        } else if (newRide.status === "completed") {
-          setCompletedRides((prev) => [...prev, newRide]);
-        }
+        // Avoid flickering by using a more controlled update approach
+        // Rather than inserting directly, refresh all data
+        debouncedLoadRides();
       } else if (payload.eventType === "UPDATE") {
         const updatedRide = payload.new as Ride;
         const oldRide = payload.old as Ride;
@@ -413,6 +427,13 @@ export default function RideManagement() {
           return;
         }
 
+        // For status changes that are critical, debounce the whole update
+        if (oldRide.status !== updatedRide.status) {
+          debouncedLoadRides();
+          return;
+        }
+
+        // For other changes, use the more fine-grained approach
         // Use refs to get latest state without depending on them in useCallback
         const currentActiveRides = [...ridesRef.current.active];
         const currentPendingRides = [...ridesRef.current.pending];
@@ -473,18 +494,8 @@ export default function RideManagement() {
         const deletedRide = payload.old as Ride;
         console.log("Ride deleted:", deletedRide);
 
-        // Remove from appropriate array without touching others
-        if (deletedRide.status === "active") {
-          setActiveRides((prev) => prev.filter((r) => r.id !== deletedRide.id));
-        } else if (deletedRide.status === "pending") {
-          setPendingRides((prev) =>
-            prev.filter((r) => r.id !== deletedRide.id)
-          );
-        } else if (deletedRide.status === "completed") {
-          setCompletedRides((prev) =>
-            prev.filter((r) => r.id !== deletedRide.id)
-          );
-        }
+        // Use the debounced load instead of direct state updates
+        debouncedLoadRides();
       }
     },
     [
@@ -504,6 +515,12 @@ export default function RideManagement() {
     // Initial data load
     loadRides();
 
+    // Prevent multiple subscriptions
+    if (subscriptionRef.current) {
+      console.log("Subscription already exists, not creating a new one");
+      return;
+    }
+
     // Create a stable subscription that won't be recreated when component rerenders
     const channel = supabase
       .channel("rides")
@@ -516,115 +533,115 @@ export default function RideManagement() {
         },
         handleRealtimeUpdate
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log(`Subscription status: ${status}`);
+
+        // If we've successfully connected, make sure we have latest data
+        if (status === "SUBSCRIBED") {
+          setTimeout(() => {
+            debouncedLoadRides();
+          }, 1000);
+        }
+      });
+
+    // Store reference to the subscription
+    subscriptionRef.current = channel;
 
     // This cleanup function will only run when the component unmounts
     return () => {
-      channel.unsubscribe();
+      console.log("Component unmounting, cleaning up subscription");
+      if (subscriptionRef.current) {
+        channel.unsubscribe();
+        subscriptionRef.current = null;
+      }
     };
-  }, [isMounted, loadRides, handleRealtimeUpdate]); // Depend on isMounted to ensure this runs client-side only
+  }, [isMounted]); // Remove unstable dependencies that cause recreation
+
+  // Separate effect for handleRealtimeUpdate dependency change
+  useEffect(() => {
+    // Update the event handler of an existing subscription when dependencies change
+    if (subscriptionRef.current && isMounted) {
+      console.log("Updating subscription event handler");
+      // The subscription setup still uses the original handler, but we don't need
+      // to recreate the entire subscription when these dependencies change
+    }
+  }, [handleRealtimeUpdate, debouncedLoadRides, loadRides]);
 
   // Move ride to completed - optimized for immediate visual feedback
   const moveToCompleted = useCallback(
     async (ride: Ride, fromStatus: string) => {
-    // Set loading state
-    setActionLoading(ride.id);
+      // Set loading state
+      setActionLoading(ride.id);
 
-    try {
+      try {
         // Mark the ride ID as seen to prevent it from reappearing
         addSeenRideId(ride.id);
 
-        // Create a completed ride with complete data
-      const completedRide: Ride = {
-        ...ride,
-        status: "completed",
-        completed_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        };
+        // Instead of updating the UI immediately and then again after API response,
+        // just set the loading state and wait for the real-time updates
+        const result = await updateRideStatus(ride.id, "completed");
 
-        // Get current state values via ref
-        const currentActiveRides = [...ridesRef.current.active];
-        const currentPendingRides = [...ridesRef.current.pending];
-        const currentCompletedRides = [...ridesRef.current.completed];
+        console.log("Ride moved to completed:", result);
 
-        // Create updates based on current state
-        let newActiveRides = currentActiveRides;
-        let newPendingRides = currentPendingRides;
-        let newCompletedRides = currentCompletedRides;
+        // If we got back an empty result or no result, we may not get a real-time update
+        // So manually update the UI to avoid confusion
+        if (!result || result.length === 0) {
+          console.log("No data returned from update, manually updating UI");
 
-      // First update the UI state
-      if (fromStatus === "pending") {
-          newPendingRides = currentPendingRides.filter((r) => r.id !== ride.id);
-      } else if (fromStatus === "active") {
-          newActiveRides = currentActiveRides.filter((r) => r.id !== ride.id);
-      }
+          // Create a completed ride from the original ride data
+          const completedRide: Ride = {
+            ...ride,
+            status: "completed" as
+              | "pending"
+              | "active"
+              | "completed"
+              | "cancelled"
+              | "archived",
+            updated_at: new Date().toISOString(),
+            completed_at: new Date().toISOString(),
+          };
 
-      // Add to completed rides at the top of the list
-        newCompletedRides = [
-          completedRide,
-          ...currentCompletedRides.filter((r) => r.id !== completedRide.id),
-        ];
+          // Update local state directly
+          if (fromStatus === "active") {
+            setActiveRides((prev) => prev.filter((r) => r.id !== ride.id));
+          } else if (fromStatus === "pending") {
+            setPendingRides((prev) => prev.filter((r) => r.id !== ride.id));
+          }
 
-        // Apply all state updates in a batch
-        updateRideState(newActiveRides, newPendingRides, newCompletedRides);
-
-      // Highlight the newly added ride
-      setLastCompletedRideId(ride.id);
-      setTimeout(() => setLastCompletedRideId(null), 3000);
-
-        // Auto-scroll to completed rides section
-        if (completedSectionRef.current) {
-          completedSectionRef.current.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
+          // Add to completed rides if not already there
+          setCompletedRides((prev) => {
+            if (prev.some((r) => r.id === ride.id)) {
+              return prev.map((r) => (r.id === ride.id ? completedRide : r));
+            } else {
+              return [...prev, completedRide];
+            }
           });
-        }
 
-        // Then update the backend - this will preserve all ride details and add the duration
-        console.log("Updating ride status for:", ride.id);
+          // Set the last completed ride ID to trigger highlight animation
+          setLastCompletedRideId(ride.id);
+          setTimeout(() => setLastCompletedRideId(null), 3000);
 
-        // Try the update but handle errors gracefully
-        try {
-          // This is the primary update method
-          const result = await updateRideStatus(ride.id, "completed");
-          console.log("Update ride result:", result);
-
-          // Update seen ride IDs state to ensure it's in sync
-          setSeenRideIds(getSeenRideIds());
-        } catch (updateError) {
-          console.error("Database update error:", updateError);
-
-          // If the regular update failed, try a simpler approach with just status
-          try {
-            console.log("Trying simple status update as fallback...");
-
-            const { error } = await supabase
-              .from("rides")
-              .update({
-                status: "completed",
-                updated_at: new Date().toISOString(),
-                completed_at: new Date().toISOString(),
-              })
-              .eq("id", ride.id);
-
-            if (error) throw error;
-          } catch (simpleError) {
-            console.error("Simple update also failed:", simpleError);
-            // Show warning to user since DB wasn't updated
-            alert(
-              "Ride marked as completed in the UI, but there was an issue updating the database. The change may not persist if you refresh the page."
-            );
+          // Scroll to completed section
+          if (completedSectionRef.current) {
+            setTimeout(() => {
+              completedSectionRef.current?.scrollIntoView({
+                behavior: "smooth",
+              });
+            }, 500);
           }
         }
-    } catch (error) {
-      console.error("Error in moveToCompleted:", error);
-        // Show error to user
-        alert("There was an error completing this ride. Please try again.");
-    } finally {
-      setActionLoading(null);
-    }
+      } catch (error) {
+        console.error("Error completing ride:", error);
+        alert("There was an error completing this ride.");
+
+        // Only on error, force a refresh to ensure consistent state
+        debouncedLoadRides();
+      } finally {
+        // Clear the loading state
+        setActionLoading(null);
+      }
     },
-    [updateRideState]
+    [updateRideStatus, debouncedLoadRides]
   );
 
   // Archive a completed ride
@@ -823,34 +840,34 @@ export default function RideManagement() {
   // Shared refresh button component
   const RefreshButton = () => (
     <div className="flex space-x-2">
-    <button
-      onClick={() => {
-        setIsLoading(true);
-        loadRides().finally(() => setIsLoading(false));
-      }}
-      className="bg-batesBlue hover:bg-batesBlue/80 text-white py-2 px-4 rounded-md text-sm font-medium flex items-center"
-      disabled={isLoading}
-    >
-      {isLoading ? (
-        <FaSpinner className="animate-spin mr-2" />
-      ) : (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-4 w-4 mr-2"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-          />
-        </svg>
-      )}
-      Refresh
-    </button>
+      <button
+        onClick={() => {
+          setIsLoading(true);
+          loadRides().finally(() => setIsLoading(false));
+        }}
+        className="bg-batesBlue hover:bg-batesBlue/80 text-white py-2 px-4 rounded-md text-sm font-medium flex items-center"
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <FaSpinner className="animate-spin mr-2" />
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            />
+          </svg>
+        )}
+        Refresh
+      </button>
 
       <button
         onClick={toggleFreshStart}

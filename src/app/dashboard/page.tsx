@@ -7,7 +7,7 @@ import AnalyticsBarChart from "../components/AnalyticsBarChart";
 import AnalyticsPieChart from "../components/AnalyticsPieChart";
 import AnalyticsScatterPlot from "../components/AnalyticsScatterChart";
 import RideManagement from "../components/ActiveTripsTable";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import DriverSelectionCard from "../components/DriverSelection";
@@ -78,6 +78,7 @@ export default function Dashboard() {
   const [showChartModal, setShowChartModal] = useState(false);
   const [selectedChart, setSelectedChart] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const router = useRouter();
 
   // Analytics data
   const [analyticsData, setAnalyticsData] = useState({
@@ -99,10 +100,26 @@ export default function Dashboard() {
 
   const [loading, setLoading] = useState(true);
 
+  // Function to check cookie
+  const getCookie = (name: string): string | null => {
+    if (typeof document === "undefined") return null;
+    const match = document.cookie.match(
+      new RegExp("(^| )" + name + "=([^;]+)")
+    );
+    return match ? match[2] : null;
+  };
+
   // Set isClient to true after component mounts
   useEffect(() => {
     setIsClient(true);
-  }, []);
+
+    // Check if user is admin, if not redirect to student page
+    const isAdmin = getCookie("admin") === "true";
+    if (!isAdmin) {
+      console.log("Non-admin user detected, redirecting to student page");
+      router.push("/student");
+    }
+  }, [router]);
 
   useEffect(() => {
     if (auth) {
@@ -274,7 +291,7 @@ export default function Dashboard() {
               {links.map(({ label, icon: Icon, href }, index) => (
                 <Link
                   key={index}
-                  href={href}
+                  href={href as any}
                   className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 ${
                     pathname === href
                       ? "bg-batesMaroon text-white font-medium"

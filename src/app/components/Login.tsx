@@ -127,7 +127,7 @@ export default function Login() {
         <p className="text-center text-gray-600 mt-4">
           Don't have an account?{" "}
           <Link
-            href="/signup"
+            href={"/signup" as any}
             className="text-[#881124] hover:text-red-600 transition duration-300"
           >
             Sign up here

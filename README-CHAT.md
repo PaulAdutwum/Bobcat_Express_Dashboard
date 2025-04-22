@@ -1,5 +1,26 @@
 # Chat Feature Setup Guide
 
+## IMPORTANT: Messages Table Setup Required
+
+The chat functionality requires a `messages` table in your Supabase database. Follow these steps to set it up:
+
+1. **Use the SQL file**:
+
+   - Open the `create-messages-table.sql` file in this project
+   - Follow the instructions at the top of the file to run the SQL in your Supabase dashboard
+
+2. **Verify setup**:
+
+   - After running the SQL, the chat system should automatically work
+   - You should see a confirmation message in the chat window when you click the chat button
+   - If you're still having issues, check the browser console for specific error messages
+
+3. **For local development**:
+   - Make sure your `.env.local` file has the correct Supabase credentials
+   - The chat system requires the proper environment variables to connect to your database
+
+## Overview
+
 This guide explains how to set up the real-time chat feature between students and admins in the Bates Shuttle application.
 
 ## Prerequisites

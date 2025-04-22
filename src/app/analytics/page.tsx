@@ -39,6 +39,13 @@ import {
   fetchDailyRides,
 } from "@/lib/supabase";
 import { subscribeToRides } from "@/lib/supabase";
+import {
+  collection,
+  query,
+  orderBy,
+  getDocs,
+  Firestore,
+} from "firebase/firestore";
 
 // Navigation links
 const links = [
@@ -295,7 +302,7 @@ export default function AnalyticsPage() {
     try {
       // Your Firebase collection code here
       // Example:
-      // const q = query(collection(db, "ride_logs"), orderBy("requestTime", "desc"));
+      // const q = query(collection(db as Firestore, "ride_logs"), orderBy("requestTime", "desc"));
       // ...
     } catch (error) {
       console.error("Firebase error:", error);
@@ -312,7 +319,7 @@ export default function AnalyticsPage() {
     try {
       // Your Firebase code here
       // Example:
-      // const q = query(collection(db, "collection_name"));
+      // const q = query(collection(db as Firestore, "collection_name"));
       // const snapshot = await getDocs(q);
       // return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch (error) {
@@ -387,7 +394,7 @@ export default function AnalyticsPage() {
               {links.map(({ label, icon: Icon, href }, index) => (
                 <Link
                   key={index}
-                  href={href}
+                  href={href as any}
                   className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 ${
                     pathname === href
                       ? "bg-batesMaroon text-white font-medium"

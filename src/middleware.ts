@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// This is a simplified middleware for development purposes
+// This middleware controls access to admin and student routes
 export function middleware(request: NextRequest) {
   // Get the path
   const path = request.nextUrl.pathname;
@@ -11,55 +11,63 @@ export function middleware(request: NextRequest) {
     path.startsWith('/dashboard') || 
     path.startsWith('/analytics') || 
     path.startsWith('/ride-management') ||
-    path.startsWith('/driver-status');
+    path.startsWith('/driver-status') ||
+    path.startsWith('/shuttle-tracking') ||
+    path.startsWith('/user-logs');
   
   // Check if this is a student route
   const isStudentRoute = path.startsWith('/student');
   
   // Get auth cookie
   const authCookie = request.cookies.get('auth');
-  const isAuthenticated = authCookie?.value ? true : false;
+  const isAuthenticated = authCookie?.value === 'true';
   
-  // Admin check - more permissive for development
+  // Get email and admin cookies
   const emailCookie = request.cookies.get('user_email');
   const adminCookie = request.cookies.get('admin');
   
-  // During development, allow more flexible admin access
-  const isAdmin = 
-    adminCookie?.value === 'true' || 
-    authCookie?.value?.includes('admin') || 
-    emailCookie?.value === 'padutwum@bates.edu' ||
-    emailCookie?.value?.endsWith('@bates.edu'); // For development, treat all Bates emails as admin
+  // Log cookies in development mode for debugging
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Middleware processing path:', path);
+    console.log('Auth cookie:', authCookie?.value);
+    console.log('Email cookie:', emailCookie?.value);
+    console.log('Admin cookie:', adminCookie?.value);
+  }
   
-  // For development: bypass most auth checks if hitting issues
-  const isDevelopmentMode = process.env.NODE_ENV === 'development';
-
-  // Special development bypass - uncommenting this line allows full access during development
-  // if (isDevelopmentMode) return NextResponse.next();
+  // Only padutwum@bates.edu has admin access, regardless of development mode
+  const isAdmin = emailCookie?.value === 'padutwum@bates.edu';
   
-  // Simple rules with development flexibility
+  // Authentication checks - these apply in all environments
+  
+  // If not authenticated, redirect to home page
   if (!isAuthenticated && (isAdminRoute || isStudentRoute)) {
-    // Allow development access in certain cases
-    if (isDevelopmentMode && emailCookie?.value) {
-      return NextResponse.next();
-    }
-    
-    // Redirect to home if trying to access protected routes without auth
+    console.log('Not authenticated, redirecting to home');
     return NextResponse.redirect(new URL('/', request.url));
   }
   
+  // If authenticated but not admin, and trying to access admin routes, redirect to student dashboard
   if (isAuthenticated && !isAdmin && isAdminRoute) {
-    // For development, just log instead of redirecting
-    if (isDevelopmentMode) {
-      console.log("Warning: Non-admin accessing admin route, but allowing in development mode");
-      return NextResponse.next();
-    }
-    
-    // Redirect students to student home if they try to access admin routes
+    console.log('Not admin, redirecting to student dashboard');
     return NextResponse.redirect(new URL('/student', request.url));
   }
   
-  // Continue for all other cases
+  // If authenticated with an email that's not padutwum@bates.edu, 
+  // set a cookie to indicate they're a student account
+  if (isAuthenticated && !isAdmin && !isStudentRoute) {
+    // Create a response that continues the request
+    const response = NextResponse.next();
+    
+    // Set the admin cookie to false for non-padutwum@bates.edu emails
+    response.cookies.set('admin', 'false', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== 'development',
+      sameSite: 'strict'
+    });
+    
+    return response;
+  }
+  
+  // Continue for all other cases (authenticated and accessing appropriate routes)
   return NextResponse.next();
 }
 
@@ -71,6 +79,8 @@ export const config = {
     '/ride-management/:path*',
     '/driver-status/:path*',
     '/shuttle-location/:path*',
+    '/shuttle-tracking/:path*',
+    '/user-logs/:path*',
     '/student/:path*',
   ],
 }; 

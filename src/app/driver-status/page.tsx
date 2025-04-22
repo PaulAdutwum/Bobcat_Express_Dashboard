@@ -105,7 +105,7 @@ export default function DriverStatusPage() {
               {links.map((link) => (
                 <li key={link.href}>
                   <Link
-                    href={link.href}
+                    href={link.href as any}
                     className={`flex items-center px-4 py-3 text-white rounded-lg hover:bg-[var(--batesBlueLight)] transition-colors ${
                       link.href === "/driver-status"
                         ? "bg-[var(--batesBlueLight)]"

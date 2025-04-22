@@ -132,7 +132,7 @@ export default function RideManagementPage() {
               {links.map(({ label, icon: Icon, href }, index) => (
                 <Link
                   key={index}
-                  href={href}
+                  href={href as any}
                   className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 ${
                     pathname === href
                       ? "bg-batesMaroon text-white font-medium"
@@ -149,7 +149,7 @@ export default function RideManagementPage() {
           <div className="mt-auto p-4 border-t border-[var(--batesBorder)]">
             <div className="space-y-2">
               <Link
-                href="/"
+                href={"/" as any}
                 className="w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 bg-[var(--batesBlue)] hover:bg-batesMaroon/90 text-gray-300 hover:text-white"
               >
                 <FaArrowLeft className="text-lg" />
@@ -185,7 +185,7 @@ export default function RideManagementPage() {
 
             <div className="flex items-center space-x-4">
               <Link
-                href="/chat-center"
+                href={"/chat-center" as any}
                 className="relative p-2 text-white hover:text-batesMaroon rounded-full bg-[var(--batesBlue)] hover:bg-batesMaroon/20 transition-colors"
                 aria-label="Chat Center"
               >

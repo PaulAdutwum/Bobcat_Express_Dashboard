@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { GoogleMap, useLoadScript } from "@react-google-maps/api";
 import { db } from "@/lib/firebase";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, Firestore } from "firebase/firestore";
 
 const GOOGLE_MAPS_API_KEY: string =
   process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
@@ -75,7 +75,7 @@ export default function GoogleMapComponent() {
         }
 
         // Get initial data
-        const docRef = doc(db, "drivers", "shuttle-1");
+        const docRef = doc(db as Firestore, "drivers", "shuttle-1");
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {

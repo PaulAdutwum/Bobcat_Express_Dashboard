@@ -10,6 +10,7 @@ import {
   Timestamp,
   DocumentData,
   QuerySnapshot,
+  Firestore,
 } from "firebase/firestore";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa";
@@ -45,7 +46,7 @@ export default function UserLogs() {
     try {
       // Proceed with Firestore query if db is available
       const q = query(
-        collection(db, "ride_logs"),
+        collection(db as Firestore, "ride_logs"),
         orderBy("requestTime", "desc")
       );
 
@@ -208,7 +209,7 @@ export default function UserLogs() {
               ].map((link, index) => (
                 <li key={index}>
                   <Link
-                    href={link.href}
+                    href={{ pathname: link.href }}
                     className="text-blue-400 hover:text-white transition duration-300"
                   >
                     {link.label}
