@@ -1,77 +1,101 @@
- Bobcat-Express-Shuttle-
-I created a dashboard to support and improve campus transportation services at Bates College for all students
+# 🚌 Bobcat Express Shuttle — Bates College
 
-Bobcat Express Shuttle 
+A full-featured, real-time shuttle management system designed for the Bates College community. This platform connects students, faculty, and staff with on-demand transportation services around campus and nearby cities, offering seamless booking, tracking, and administration tools.
 
-Bobcat Express Shuttle is a Next.js-powered admin dashboard and ride request system that allows **students at Bates College** to request, track, and manage shuttle rides efficiently.
+![Bobcat Express Banner](public/banner.png) <!-- Optional if you have a banner image -->
 
- Features
+---
 
- Admin Dashboard:
+## 🚀 Overview
 
-- View user ride requests, logs, and analytics.
-- Monitor driver activity and trip history.
+Bobcat Express provides:
 
-Google Maps Integration**:
+- Real-time shuttle tracking
+- Ride booking for students
+- Administrative ride oversight
+- Driver trip queue and communication tools
+- Analytics dashboard for performance tracking
 
-- Real-time shuttle location tracking.
-- Estimate arrival times based on live GPS data.
+---
 
- Firebase Backend:
+## ✨ Key Features
 
-- Secure authentication & data storage.
-- Users can log in and access ride histories.
+### 🧑‍🎓 For Students
+- 🚕 **Ride Booking** with pickup/drop-off
+-  **Live Shuttle Map** (Google Maps)
+-  **Status Notifications** (pending → active → complete)
+-  **Ride History** tracking
+-  **Integrated Chat** with admin/driver
+-  **User Profile** with preferences
 
-📊 Analytics & Reporting:
+### 🧑‍💼 For Admins
+-  **Central Dashboard** for all rides
+-  **Ride Request Management**
+- 👨‍✈ **Driver Assignment Tools**
+-  **Analytics Suite** with:
+  - Total rides, active/completed rides
+  - Wait times, peak hours
+  - Most requested locations
+- 📄 **User & Ride Logs**
 
-- Visualize rides per day, driver logs, and trip statistics.
-- Dynamic charts for analyzing shuttle efficiency.
+###  For Drivers
+-  **Trip Queue** in real-time
+-  **Navigation Links**
+-  **Ride Status Control**
+-  **Live Messaging** with students/admin
 
-Real-time Chat Feature:
+---
 
-- Students can chat with dispatchers or other passengers**.
-- Chat functionality built using Socket.io for live updates.
+## 🧪 Technical Features
 
-User-Friendly Interface:
+-  **Real-Time Location Tracking** (Google Maps + Firebase)
+-  **Instant Ride Updates** via Supabase & Firestore
+-  **Role-Based Secure Auth** with Firebase
+-  **Progressive Web App (PWA)** capability
+-  **Fully Responsive** for mobile, tablet, and desktop
+-  **Built-in Analytics Dashboard**
+-  **Real-Time Chat** (Firebase-based)
 
-- Fully responsive and mobile-first design.
-- Works seamlessly across phones, tablets, and desktops.
+---
 
+## 🧰 Tech Stack
 
+| Layer            | Tools/Technologies |
+|------------------|--------------------|
+| **Frontend**     | Next.js 15+, React, TypeScript |
+| **Styling**      | Tailwind CSS, Custom Themes |
+| **Backend/Realtime** | Firebase Firestore, Supabase |
+| **Authentication** | Firebase Auth (Email, Google SSO) |
+| **Map Integration** | Google Maps JavaScript API |
+| **State Management** | React Context API, Hooks |
+| **Animations**   | Framer Motion |
+| **Icons**        | React Icons |
+| **Deployment**   | Vercel |
+| **CI/CD**        | GitHub Actions (build, lint, test) |
 
-## Tech Stack
+---
 
-| Technology                     | Purpose                                          |
-| ------------------------------ | ------------------------------------------------ |
-| **Next.js**                    | Frontend framework for UI and pages              |
-| **NestJS**                     | Backend framework for handling requests          |
-| **Firebase**                   | Authentication, Firestore for real-time database |
-| **Google Maps API**            | Shuttle tracking & location services             |
-| **Socket.io**                  | Real-time chat functionality                     |
-| **Chart.js & React-ChartJS-2** | Data visualization & analytics                   |
-| **Tailwind CSS**               | Responsive UI styling                            |
+## 🧑‍💻 Getting Started
 
+### 🔐 Prerequisites
+- Node.js v16+
+- npm or yarn
+- Firebase + Supabase account setup
+- Google Maps API Key
 
+---
 
-## Screenshots
+### 🛠️ Installation
 
-###  Homepage Uses Google Firebase to Authenticate Students to Ensure Security
+```bash
+# 1. Clone the repo
+git clone https://github.com/your-username/bobcat-express-dashboard.git
+cd bobcat-express-dashboard
 
-![Homepage!](https://github.com/user-attachments/assets/44334bcc-7614-4d3a-8f4e-2a2048a3d8f8)
+# 2. Install dependencies
+npm install
+# or
+yarn install
 
-### Dashboard with Datao Daily Rides 
-
-![Dashboard](https://github.com/user-attachments/assets/585fe779-d6b2-4b15-8cc8-1f18ac6c5921)
-
-###  The Dynamic User Logs Page populates User Rides for  Data Analytics
-
-![User Logs and Ride Request Data](https://github.com/user-attachments/assets/00a3b2ec-9c80-4647-9b92-6520cb0b49fe)
-
-### Google Maps for Tracking Live Shuttle Location
-
-![Shuttle Locatio Page ](https://github.com/user-attachments/assets/d8acf0a2-8411-469d-b9a3-2effac4841e6)
-
-
-
-
-
+# 3. Create a .env.local file
+touch .env.local
