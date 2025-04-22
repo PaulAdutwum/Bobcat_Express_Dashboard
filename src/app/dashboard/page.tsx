@@ -77,6 +77,7 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [showChartModal, setShowChartModal] = useState(false);
   const [selectedChart, setSelectedChart] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
   // Analytics data
   const [analyticsData, setAnalyticsData] = useState({
@@ -98,6 +99,11 @@ export default function Dashboard() {
 
   const [loading, setLoading] = useState(true);
 
+  // Set isClient to true after component mounts
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   useEffect(() => {
     if (auth) {
       const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -118,6 +124,8 @@ export default function Dashboard() {
 
   // Load analytics data with real-time updates
   useEffect(() => {
+    if (!isClient) return;
+
     const loadAnalytics = async () => {
       try {
         setLoading(true);
@@ -187,7 +195,7 @@ export default function Dashboard() {
       subscription.unsubscribe();
       clearInterval(interval);
     };
-  }, []);
+  }, [isClient]);
 
   const handleSignOut = async () => {
     try {
@@ -410,125 +418,6 @@ export default function Dashboard() {
             </motion.div>
           </motion.div>
 
-          {/* Secondary Stats Row */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-4"
-          >
-            {/* Driver Stats Card */}
-            <motion.div
-              whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
-              className="dark-card cursor-pointer"
-              onClick={() => handleAnalyticsCardClick("Driver Statistics")}
-            >
-              <div className="flex items-center mb-4">
-                <div className="p-3 rounded-lg bg-[var(--accentColor4)]/20">
-                  <FaUserTie className="text-[var(--accentColor4)] text-xl" />
-                </div>
-                <h3 className="text-lg font-semibold text-white ml-3">
-                  Driver Statistics
-                </h3>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Total Drivers</span>
-                  <span className="font-semibold text-white">
-                    {analyticsData.totalDrivers}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Active Drivers</span>
-                  <span className="font-semibold text-[var(--accentColor2)]">
-                    {analyticsData.activeDrivers}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Efficiency</span>
-                  <span className="font-semibold text-[var(--accentColor1)]">
-                    {analyticsData.efficiency}%
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Time Stats Card */}
-            <motion.div
-              whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
-              className="dark-card cursor-pointer"
-              onClick={() => handleAnalyticsCardClick("Time Metrics")}
-            >
-              <div className="flex items-center mb-4">
-                <div className="p-3 rounded-lg bg-teal-500/20">
-                  <FaStopwatch className="text-teal-500 text-xl" />
-                </div>
-                <h3 className="text-lg font-semibold text-white ml-3">
-                  Time Metrics
-                </h3>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Avg. Wait Time</span>
-                  <span className="font-semibold text-white">
-                    {analyticsData.averageWaitTime.toFixed(1)} min
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Avg. Trip Duration</span>
-                  <span className="font-semibold text-white">
-                    {analyticsData.averageTripDuration.toFixed(1)} min
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Busiest Hours</span>
-                  <span className="font-semibold text-[var(--accentColor3)]">
-                    {analyticsData.busyHours}
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Location Stats Card */}
-            <motion.div
-              whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
-              className="dark-card cursor-pointer"
-              onClick={() => handleAnalyticsCardClick("Location Analytics")}
-            >
-              <div className="flex items-center mb-4">
-                <div className="p-3 rounded-lg bg-[var(--accentColor1)]/20">
-                  <FaSearchLocation className="text-[var(--accentColor1)] text-xl" />
-                </div>
-                <h3 className="text-lg font-semibold text-white ml-3">
-                  Top Locations
-                </h3>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Top Destination</span>
-                  <span className="font-semibold text-white">
-                    {analyticsData.topDestination}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Top Pickup</span>
-                  <span className="font-semibold text-white">
-                    {analyticsData.topPickup}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Total Passengers</span>
-                  <span className="font-semibold text-[var(--accentColor5)]">
-                    {analyticsData.totalPassengers}
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-
           {/* Ride Request Form */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -539,15 +428,17 @@ export default function Dashboard() {
             <RideRequestForm />
           </motion.div>
 
-          {/* Ride History or Active Trips Table */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="mb-8"
-          >
-            <RideManagement />
-          </motion.div>
+          {/* Ride Management - Only render when client-side */}
+          {isClient && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mb-8"
+            >
+              <RideManagement />
+            </motion.div>
+          )}
         </div>
       </main>
     </div>

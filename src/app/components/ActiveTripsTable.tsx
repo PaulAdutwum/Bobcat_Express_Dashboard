@@ -46,43 +46,66 @@ const formatDateTime = (dateString: string) => {
   }
 };
 
+// Safely access localStorage with browser environment check
+const safeLocalStorage = {
+  getItem: (key: string): string | null => {
+    if (typeof window === "undefined") {
+      return null;
+    }
+
+    try {
+      return localStorage.getItem(key);
+    } catch (error) {
+      console.error(`Error reading from localStorage: ${key}`, error);
+      return null;
+    }
+  },
+
+  setItem: (key: string, value: string): void => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    try {
+      localStorage.setItem(key, value);
+    } catch (error) {
+      console.error(`Error writing to localStorage: ${key}`, error);
+    }
+  },
+};
+
 // Store archived ride IDs in localStorage to prevent them from reappearing
 const getArchivedRideIds = (): string[] => {
+  const storedIds = safeLocalStorage.getItem("archivedRideIds");
+
+  if (!storedIds) {
+    return [];
+  }
+
+  // Parse the stored JSON
   try {
-    const storedIds = localStorage.getItem("archivedRideIds");
+    const parsed = JSON.parse(storedIds);
 
-    if (!storedIds) {
-      return [];
-    }
-
-    // Parse the stored JSON
-    try {
-      const parsed = JSON.parse(storedIds);
-
-      // Validate that it's actually an array of strings
-      if (Array.isArray(parsed)) {
-        // Filter out any non-string values
-        return parsed.filter((id) => typeof id === "string");
-      } else {
-        console.error(
-          "Archived ride IDs in localStorage is not an array:",
-          parsed
-        );
-        // Reset localStorage since it's corrupted
-        localStorage.setItem("archivedRideIds", JSON.stringify([]));
-        return [];
-      }
-    } catch (parseError) {
+    // Validate that it's actually an array of strings
+    if (Array.isArray(parsed)) {
+      // Filter out any non-string values
+      return parsed.filter((id) => typeof id === "string");
+    } else {
       console.error(
-        "Error parsing archived ride IDs from localStorage:",
-        parseError
+        "Archived ride IDs in localStorage is not an array:",
+        parsed
       );
       // Reset localStorage since it's corrupted
-      localStorage.setItem("archivedRideIds", JSON.stringify([]));
+      safeLocalStorage.setItem("archivedRideIds", JSON.stringify([]));
       return [];
     }
-  } catch (error) {
-    console.error("Error reading archived ride IDs from localStorage:", error);
+  } catch (parseError) {
+    console.error(
+      "Error parsing archived ride IDs from localStorage:",
+      parseError
+    );
+    // Reset localStorage since it's corrupted
+    safeLocalStorage.setItem("archivedRideIds", JSON.stringify([]));
     return [];
   }
 };
@@ -92,7 +115,7 @@ const addArchivedRideId = (id: string): void => {
     const ids = getArchivedRideIds();
     if (!ids.includes(id)) {
       ids.push(id);
-      localStorage.setItem("archivedRideIds", JSON.stringify(ids));
+      safeLocalStorage.setItem("archivedRideIds", JSON.stringify(ids));
     }
   } catch (error) {
     console.error("Error saving archived ride ID to localStorage:", error);
@@ -101,33 +124,25 @@ const addArchivedRideId = (id: string): void => {
 
 // New function to get and manage seen ride IDs
 const getSeenRideIds = (): string[] => {
+  const storedIds = safeLocalStorage.getItem("seenRideIds");
+
+  if (!storedIds) {
+    return [];
+  }
+
   try {
-    const storedIds = localStorage.getItem("seenRideIds");
+    const parsed = JSON.parse(storedIds);
 
-    if (!storedIds) {
+    if (Array.isArray(parsed)) {
+      return parsed.filter((id) => typeof id === "string");
+    } else {
+      console.error("Seen ride IDs in localStorage is not an array:", parsed);
+      safeLocalStorage.setItem("seenRideIds", JSON.stringify([]));
       return [];
     }
-
-    try {
-      const parsed = JSON.parse(storedIds);
-
-      if (Array.isArray(parsed)) {
-        return parsed.filter((id) => typeof id === "string");
-      } else {
-        console.error("Seen ride IDs in localStorage is not an array:", parsed);
-        localStorage.setItem("seenRideIds", JSON.stringify([]));
-        return [];
-      }
-    } catch (parseError) {
-      console.error(
-        "Error parsing seen ride IDs from localStorage:",
-        parseError
-      );
-      localStorage.setItem("seenRideIds", JSON.stringify([]));
-      return [];
-    }
-  } catch (error) {
-    console.error("Error reading seen ride IDs from localStorage:", error);
+  } catch (parseError) {
+    console.error("Error parsing seen ride IDs from localStorage:", parseError);
+    safeLocalStorage.setItem("seenRideIds", JSON.stringify([]));
     return [];
   }
 };
@@ -137,7 +152,7 @@ const addSeenRideId = (id: string): void => {
     const ids = getSeenRideIds();
     if (!ids.includes(id)) {
       ids.push(id);
-      localStorage.setItem("seenRideIds", JSON.stringify(ids));
+      safeLocalStorage.setItem("seenRideIds", JSON.stringify(ids));
     }
   } catch (error) {
     console.error("Error saving seen ride ID to localStorage:", error);
@@ -146,7 +161,7 @@ const addSeenRideId = (id: string): void => {
 
 const clearSeenRides = (): void => {
   try {
-    localStorage.setItem("seenRideIds", JSON.stringify([]));
+    safeLocalStorage.setItem("seenRideIds", JSON.stringify([]));
   } catch (error) {
     console.error("Error clearing seen ride IDs in localStorage:", error);
   }
@@ -161,12 +176,11 @@ export default function RideManagement() {
   const [lastCompletedRideId, setLastCompletedRideId] = useState<string | null>(
     null
   );
-  const [archivedRideIds, setArchivedRideIds] = useState<string[]>(
-    getArchivedRideIds()
-  );
-  const [seenRideIds, setSeenRideIds] = useState<string[]>(getSeenRideIds());
+  const [archivedRideIds, setArchivedRideIds] = useState<string[]>([]);
+  const [seenRideIds, setSeenRideIds] = useState<string[]>([]);
   const [freshStart, setFreshStart] = useState<boolean>(false);
   const [processedUpdates, setProcessedUpdates] = useState<string[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
 
   // Reference to the completed rides section for smooth scrolling
   const completedSectionRef = useRef<HTMLDivElement>(null);
@@ -177,6 +191,25 @@ export default function RideManagement() {
     pending: pendingRides,
     completed: completedRides,
   });
+
+  // Load localStorage data only after component mounts
+  useEffect(() => {
+    setIsMounted(true);
+    if (typeof window !== "undefined") {
+      setArchivedRideIds(getArchivedRideIds());
+      setSeenRideIds(getSeenRideIds());
+
+      // Check if fresh start mode was previously set
+      const storedFreshStart = safeLocalStorage.getItem("freshStartMode");
+      if (storedFreshStart) {
+        try {
+          setFreshStart(JSON.parse(storedFreshStart));
+        } catch (e) {
+          console.error("Error parsing freshStartMode from localStorage:", e);
+        }
+      }
+    }
+  }, []);
 
   // Update the ref whenever the ride states change
   useEffect(() => {
@@ -252,12 +285,14 @@ export default function RideManagement() {
         const rides = await fetchRides();
 
         // Mark all current rides as seen
-        rides.forEach((ride) => {
-          addSeenRideId(ride.id);
-        });
+        if (isMounted) {
+          rides.forEach((ride) => {
+            addSeenRideId(ride.id);
+          });
 
-        // Update seen rides state
-        setSeenRideIds(getSeenRideIds());
+          // Update seen rides state
+          setSeenRideIds(getSeenRideIds());
+        }
 
         // Apply filtering based on archived and seen status
         const filteredRides = filterRides(rides);
@@ -281,20 +316,24 @@ export default function RideManagement() {
         setIsLoading(false);
       }
     },
-    [filterRides, updateRideState]
+    [filterRides, updateRideState, isMounted]
   );
 
   // Toggle the fresh start mode
   const toggleFreshStart = useCallback(() => {
     const newValue = !freshStart;
     setFreshStart(newValue);
-    localStorage.setItem("freshStartMode", JSON.stringify(newValue));
+    if (isMounted) {
+      safeLocalStorage.setItem("freshStartMode", JSON.stringify(newValue));
+    }
     loadRides();
-  }, [freshStart, loadRides]);
+  }, [freshStart, loadRides, isMounted]);
 
   // Stable reference to subscription callback to prevent recreation
   const handleRealtimeUpdate = useCallback(
     (payload: RealtimePostgresChangesPayload<Ride>) => {
+      if (!isMounted) return;
+
       console.log("Received real-time update:", payload);
 
       // Generate a unique update ID to prevent double processing
@@ -454,20 +493,13 @@ export default function RideManagement() {
       seenRideIds,
       processedUpdates,
       updateRideState,
+      isMounted,
     ]
   );
 
   // Main useEffect for initialization and subscriptions with stable dependencies
   useEffect(() => {
-    // Check if fresh start mode was previously set
-    const storedFreshStart = localStorage.getItem("freshStartMode");
-    if (storedFreshStart) {
-      try {
-        setFreshStart(JSON.parse(storedFreshStart));
-      } catch (e) {
-        console.error("Error parsing freshStartMode from localStorage:", e);
-      }
-    }
+    if (!isMounted) return;
 
     // Initial data load
     loadRides();
@@ -490,7 +522,7 @@ export default function RideManagement() {
     return () => {
       channel.unsubscribe();
     };
-  }, []); // Empty dependency array to run only once
+  }, [isMounted, loadRides, handleRealtimeUpdate]); // Depend on isMounted to ensure this runs client-side only
 
   // Move ride to completed - optimized for immediate visual feedback
   const moveToCompleted = useCallback(
@@ -631,7 +663,10 @@ export default function RideManagement() {
       setArchivedRideIds(newArchivedIds);
 
       // Also make sure localStorage is synchronized
-      localStorage.setItem("archivedRideIds", JSON.stringify(newArchivedIds));
+      safeLocalStorage.setItem(
+        "archivedRideIds",
+        JSON.stringify(newArchivedIds)
+      );
 
       // Update UI immediately
       setActiveRides((prev) => prev.filter((r) => r.id !== ride.id));
@@ -729,7 +764,10 @@ export default function RideManagement() {
       });
 
       // Update localStorage
-      localStorage.setItem("archivedRideIds", JSON.stringify(newArchivedIds));
+      safeLocalStorage.setItem(
+        "archivedRideIds",
+        JSON.stringify(newArchivedIds)
+      );
       setArchivedRideIds(newArchivedIds);
 
       // Update UI immediately

@@ -43,6 +43,27 @@ import { createClient } from "@supabase/supabase-js";
 import { createRide } from "@/lib/supabase";
 import { locations } from "@/lib/constants";
 
+// Safely handle localStorage operations
+const safeLocalStorage = {
+  getItem: (key: string): string | null => {
+    if (typeof window === "undefined") return null;
+    try {
+      return localStorage.getItem(key);
+    } catch (error) {
+      console.error(`Error reading from localStorage: ${key}`, error);
+      return null;
+    }
+  },
+  setItem: (key: string, value: string): void => {
+    if (typeof window === "undefined") return;
+    try {
+      localStorage.setItem(key, value);
+    } catch (error) {
+      console.error(`Error writing to localStorage: ${key}`, error);
+    }
+  },
+};
+
 // Define shuttle locations structure
 interface ShuttleLocationOption {
   id: string;
@@ -119,14 +140,19 @@ export default function HomePage() {
   const [isHoveredCards, setIsHoveredCards] = useState<number | null>(null);
   const animatingRef = useRef(false);
   const [rides, setRides] = useState<Ride[]>([]);
-  const showSuccess = searchParams.get("success") === "true";
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   // Handle hydration
   useEffect(() => {
     setIsHydrated(true);
     // Update to random stats only after hydration
     setCurrentStats(getRandomStats());
-  }, []);
+
+    // Safely access search params after hydration
+    if (searchParams && searchParams.get("success") === "true") {
+      setShowSuccessMessage(true);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (auth) {

@@ -40,10 +40,19 @@ export default function MyRidesPage() {
   const [rides, setRides] = useState<Ride[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-  const showSuccess = searchParams.get("success") === "true";
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Handle hydration - set isHydrated to true and safely access search params
+  useEffect(() => {
+    setIsHydrated(true);
+    if (searchParams?.get("success") === "true") {
+      setShowSuccess(true);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
-    if (!auth) return;
+    if (!auth || !isHydrated) return;
 
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       if (!currentUser) {
@@ -55,7 +64,7 @@ export default function MyRidesPage() {
     });
 
     return () => unsubscribe();
-  }, [router]);
+  }, [router, isHydrated]);
 
   const loadRides = async (email: string) => {
     try {
@@ -136,7 +145,7 @@ export default function MyRidesPage() {
 
   // Set up real-time subscription for this student's rides
   useEffect(() => {
-    if (!user?.email) return;
+    if (!user?.email || !isHydrated) return;
 
     const email = user.email.trim().toLowerCase();
     console.log(`Setting up subscription for rides (email: ${email})`);
@@ -182,7 +191,7 @@ export default function MyRidesPage() {
       // No need to throw, just log the error and continue
       return () => {}; // Empty cleanup function
     }
-  }, [user]);
+  }, [user, isHydrated]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
