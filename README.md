@@ -2,6 +2,9 @@
 
 A full-featured, real-time shuttle management system designed for the Bates College community. This platform connects students, faculty, and staff with on-demand transportation services around campus and nearby cities, offering seamless booking, tracking, and administration tools.
 
+
+Live Demo:** [https://bobcatshuttle.vercel.app/](https://bobcatshuttle.vercel.app/)
+
 ## 🎥 Demo Video
 
 [![Bobcat Express Demo](https://img.youtube.com/vi/H-DmH3itTGw/maxresdefault.jpg)](https://www.youtube.com/shorts/H-DmH3itTGw)
