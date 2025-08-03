@@ -325,7 +325,7 @@ export default function HomePage() {
 
   // Schedule data with consistent styling
   const scheduleData = [
-    { day: "Monday - Thursday", hours: "7:30 AM - 2:30 AM" },
+    { day: "Mon - Thu", hours: "7:30 AM - 2:30 AM" },
     { day: "Friday", hours: "7:30 AM - 3:00 AM" },
     { day: "Saturday", hours: "10:00 AM - 3:00 AM" },
     { day: "Sunday", hours: "10:00 AM - 2:30 AM" },
@@ -635,287 +635,214 @@ export default function HomePage() {
       </header>
 
       <main className="flex-grow">
-        {/* Hero Section with Improved Gradient and Animation */}
-        <section className="relative overflow-hidden">
-          <div className="absolute inset-0 z-0 overflow-hidden">
-            {/* Particle elements for floating effect */}
-            <div className="absolute right-[15%] top-[30%] w-24 h-24 rounded-full bg-[var(--primaryColor)] opacity-10 animate-float1"></div>
-            <div className="absolute left-[10%] top-[40%] w-32 h-32 rounded-full bg-[var(--accentColor1)] opacity-5 animate-float2"></div>
-            <div className="absolute right-[30%] bottom-[20%] w-40 h-40 rounded-full bg-[var(--accentColor4)] opacity-10 animate-float3"></div>
-
-            {/* Enhanced radial gradient */}
-            <div className="absolute inset-0 bg-gradient-radial from-[rgba(15,21,33,0.2)] via-[rgba(15,21,33,0.8)] to-[var(--background)] z-10"></div>
+        {/* Hero Section - Mobile First Professional Design */}
+        <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-900">
+          {/* Background Elements */}
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900/20 via-black/50 to-black"></div>
+            <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-red-900/10 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-900/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
           </div>
 
-          <div className="container mx-auto px-4 py-16 md:py-24 flex flex-col lg:flex-row items-center justify-between relative z-20">
-            <div className="lg:w-1/2 mb-10 lg:mb-0">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6 text-white leading-tight transition-transform duration-300 hover:scale-[1.02]">
-                <span className="text-[var(--batesMaroon)] hover:text-white hover:bg-[var(--batesMaroon)] transition-colors duration-300 px-1 rounded">
-                  Bates Bobcat Express
+          <div className="relative z-10 container mx-auto px-6 py-20 text-center max-w-4xl">
+            {/* Main Title */}
+            <div className="mb-8">
+              <h1 className="text-5xl md:text-7xl font-black mb-6 text-white leading-tight">
+                <span className="bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent">
+                  Bobcat Express
                 </span>
                 <br />
-                On-Demand Shuttle Service
+                <span className="text-3xl md:text-4xl font-light text-gray-300">
+                  Shuttle Service
+                </span>
               </h1>
-              <p className="text-xl text-gray-300 mb-8 max-w-xl">
-                Safe, reliable transportation around campus and to nearby
-                locations for Bates College students, faculty, and staff.
+
+              <p className="text-xl md:text-2xl text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed">
+                The Bobcat Express operates Monday–Sunday as a free, scheduled
+                shuttle service for Bates students between campus and downtown
+                Lewiston/Auburn, with frequent departures from the Chu Parking
+                Lot.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  onClick={handleSignIn}
-                  className="bg-batesMaroon text-white py-3 px-6 rounded-md font-medium hover:bg-red-800 transition-all hover:shadow-lg flex items-center justify-center gap-2"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <span className="inline-block h-4 w-4 rounded-full border-2 border-white/20 border-t-white animate-spin mr-2"></span>
-                  ) : (
-                    <FaGoogle className="mr-2" />
-                  )}
-                  Sign in with Google
-                </motion.button>
-              </div>
             </div>
 
-            <div className="lg:w-1/2 relative">
-              <div className="relative">
-                {/* Enhanced shuttle image gradient */}
-                <div className="absolute inset-0 bg-gradient-radial from-transparent via-[rgba(15,21,33,0.3)] to-[var(--background)] z-10 rounded-3xl"></div>
-                <div className="absolute -inset-1 bg-gradient-to-tr from-[var(--batesBlue)]/50 via-transparent to-[var(--batesMaroon)]/50 opacity-40 blur-xl rounded-3xl"></div>
-                <div className="absolute -inset-0.5 bg-gradient-to-br from-[var(--batesMaroon)]/20 to-[var(--batesBlue)]/20 opacity-70 rounded-3xl"></div>
-
-                {/* Single shuttle image instead of carousel */}
-                <Image
-                  src="/shuttle.png"
-                  alt="Bates Shuttle"
-                  width={600}
-                  height={400}
-                  className="rounded-3xl shadow-xl object-cover transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl relative z-20"
-                  priority
-                  onError={(e) => {
-                    // Fallback if image doesn't load
-                    const target = e.target as HTMLImageElement;
-                    target.src = "/shuttle2.png";
-                  }}
-                />
-              </div>
+            {/* CTA Button */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleSignIn}
+                disabled={loading}
+                className="group relative px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 text-white font-semibold rounded-full shadow-2xl transition-all duration-300 hover:shadow-red-500/25 hover:from-red-500 hover:to-red-600 disabled:opacity-50 min-w-[200px]"
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3"></div>
+                    Signing In...
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center">
+                    <FaGoogle className="mr-3 text-lg" />
+                    Get Started
+                  </div>
+                )}
+              </motion.button>
             </div>
-          </div>
-        </section>
 
-        {/* Real-time Statistics */}
-        <section className="bg-[var(--batesBlue)] py-12 relative z-10">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="stats-card group hover:border-[var(--accentColor1)] hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:translate-y-[-5px] transition-all duration-300 hover:bg-[rgba(59,130,246,0.03)]">
-                <div>
-                  <h3 className="stats-card-title group-hover:text-[var(--accentColor1)] transition-colors">
-                    Active Users
-                  </h3>
-                  <p className="stats-card-value">
-                    {isHydrated
-                      ? animatedStats.activeUsers
-                      : currentStats.activeUsers}
-                  </p>
+            {/* Quick Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
+              <div className="text-center">
+                <div className="text-2xl md:text-3xl font-bold text-white mb-2">
+                  Mon - Sun
                 </div>
-                <div className="stats-card-icon bg-[rgba(59,130,246,0.2)] text-[var(--accentColor1)] group-hover:bg-[var(--accentColor1)] group-hover:text-white group-hover:rotate-3 group-hover:scale-110 transition-all duration-300">
-                  <FaUsers size={24} />
-                </div>
+                <div className="text-sm text-gray-400">Available</div>
               </div>
-
-              <div className="stats-card group hover:border-[var(--accentColor2)] hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:translate-y-[-5px] transition-all duration-300 hover:bg-[rgba(16,185,129,0.03)]">
-                <div>
-                  <h3 className="stats-card-title group-hover:text-[var(--accentColor2)] transition-colors">
-                    Daily Rides
-                  </h3>
-                  <p className="stats-card-value">
-                    {isHydrated
-                      ? animatedStats.dailyRides
-                      : currentStats.dailyRides}
-                  </p>
+              <div className="text-center">
+                <div className="text-2xl md:text-3xl font-bold text-white mb-2">
+                  Safe
                 </div>
-                <div className="stats-card-icon bg-[rgba(16,185,129,0.2)] text-[var(--accentColor2)] group-hover:bg-[var(--accentColor2)] group-hover:text-white group-hover:rotate-3 group-hover:scale-110 transition-all duration-300">
-                  <FaRoute size={24} />
-                </div>
+                <div className="text-sm text-gray-400">& Reliable</div>
               </div>
-
-              <div className="stats-card group hover:border-[var(--accentColor3)] hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] hover:translate-y-[-5px] transition-all duration-300 hover:bg-[rgba(245,158,11,0.03)]">
-                <div>
-                  <h3 className="stats-card-title group-hover:text-[var(--accentColor3)] transition-colors">
-                    Total Rides
-                  </h3>
-                  <p className="stats-card-value">
-                    {isHydrated
-                      ? animatedStats.totalRides
-                      : currentStats.totalRides}
-                  </p>
+              <div className="text-center col-span-2 md:col-span-1">
+                <div className="text-2xl md:text-3xl font-bold text-white mb-2">
+                  Free
                 </div>
-                <div className="stats-card-icon bg-[rgba(245,158,11,0.2)] text-[var(--accentColor3)] group-hover:bg-[var(--accentColor3)] group-hover:text-white group-hover:rotate-3 group-hover:scale-110 transition-all duration-300">
-                  <FaBusAlt size={24} />
-                </div>
-              </div>
-
-              <div className="stats-card group hover:border-[var(--accentColor4)] hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:translate-y-[-5px] transition-all duration-300 hover:bg-[rgba(139,92,246,0.03)]">
-                <div>
-                  <h3 className="stats-card-title group-hover:text-[var(--accentColor4)] transition-colors">
-                    Avg. Ride Time
-                  </h3>
-                  <p className="stats-card-value">
-                    {isHydrated
-                      ? animatedStats.avgRideTime
-                      : currentStats.avgRideTime}{" "}
-                    min
-                  </p>
-                </div>
-                <div className="stats-card-icon bg-[rgba(139,92,246,0.2)] text-[var(--accentColor4)] group-hover:bg-[var(--accentColor4)] group-hover:text-white group-hover:rotate-3 group-hover:scale-110 transition-all duration-300">
-                  <FaClock size={24} />
-                </div>
+                <div className="text-sm text-gray-400">For Students</div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Service Information */}
-        <section className="py-16 bg-[var(--background)]">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-12 text-center text-white transition-all duration-300 hover:text-[var(--batesMaroon)] hover:scale-[1.02] hover:tracking-wide">
-              Our Services
-            </h2>
+        {/* Services Section */}
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                Our Services
+              </h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                Free Campus Shuttle to Lewiston/Auburn for All Students
+              </p>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="dark-card hover:border-[var(--accentColor1)] transition-all duration-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:-translate-y-2 hover:bg-[rgba(59,130,246,0.03)]">
-                <div className="text-[var(--accentColor1)] mb-4 text-3xl transition-transform duration-300 group-hover:scale-110">
-                  <FaMapMarkedAlt />
+            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              <motion.div
+                whileHover={{ y: -10 }}
+                className="bg-white rounded-2xl p-8 shadow-xl border hover:shadow-2xl transition-all duration-300"
+              >
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6">
+                  <FaMapMarkedAlt className="text-2xl text-white" />
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-white transition-colors duration-300 hover:text-[var(--accentColor1)]">
-                  Campus Transportation
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  Medical Transport
                 </h3>
-                <p className="text-gray-300">
-                  Get rides to and from any location on campus, including dorms,
-                  academic buildings, and athletic facilities.
+                <p className="text-gray-600 leading-relaxed">
+                  Students with mobility or accessibility needs can schedule
+                  rides in advance on the Accessible Support Shuttle for classes
+                  or approved off-campus appointments.
                 </p>
-              </div>
+              </motion.div>
 
-              <div className="dark-card hover:border-[var(--accentColor2)] transition-all hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:-translate-y-2 hover:bg-[rgba(16,185,129,0.03)]">
-                <div className="text-[var(--accentColor2)] mb-4 text-3xl transition-transform duration-300 group-hover:scale-110">
-                  <FaRoute />
+              <motion.div
+                whileHover={{ y: -10 }}
+                className="bg-white rounded-2xl p-8 shadow-xl border hover:shadow-2xl transition-all duration-300"
+              >
+                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-6">
+                  <FaRoute className="text-2xl text-white" />
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-white transition-colors duration-300 hover:text-[var(--accentColor2)]">
-                  Local Destinations
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  Community-Engaged Learning Shuttles (CELS)
                 </h3>
-                <p className="text-gray-300">
-                  Rides to nearby off-campus locations including downtown
-                  Lewiston, shopping centers, and medical facilities.
+                <p className="text-gray-600 leading-relaxed">
+                  The Community Engaged Learning Shuttle (CELS) links Bates
+                  students with Lewiston and Auburn sites for service learning
+                  sponsored community service programs.
                 </p>
-              </div>
+              </motion.div>
 
-              <div className="dark-card hover:border-[var(--accentColor3)] transition-all hover:shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:-translate-y-2 hover:bg-[rgba(245,158,11,0.03)]">
-                <div className="text-[var(--accentColor3)] mb-4 text-3xl transition-transform duration-300 group-hover:scale-110">
-                  <FaShieldAlt />
+              <motion.div
+                whileHover={{ y: -10 }}
+                className="bg-white rounded-2xl p-8 shadow-xl border hover:shadow-2xl transition-all duration-300"
+              >
+                <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mb-6">
+                  <FaShieldAlt className="text-2xl text-white" />
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-white transition-colors duration-300 hover:text-[var(--accentColor3)]">
-                  Safe Ride Program
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  Safe Ride
                 </h3>
-                <p className="text-gray-300">
-                  Late-night transportation service to ensure safety for
-                  students traveling across campus during evening hours.
+                <p className="text-gray-600 leading-relaxed">
+                  Available nightly (6 pm–2 am on weekdays, 10 am–2 am on
+                  weekends), Safe Ride offers a free shuttle for up to two
+                  students worried about walking alone, transporting them to and
+                  from campus or nearby off-campus housing.
                 </p>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>
 
-        {/* Schedule Section */}
-        <section className="py-16 bg-[var(--batesBlue)]">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row justify-between items-start gap-12">
-              <div className="md:w-1/2">
-                <h2 className="text-3xl font-bold mb-6 text-white">
-                  Operating Hours
+        {/* Hours Section */}
+        <section className="py-20 bg-gray-50">
+          <div className="container mx-auto px-6">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                  Service Hours
                 </h2>
-                <p className="mb-8 text-gray-300">
-                  The Bates Bobcat Express operates on different schedules
-                  throughout the week to accommodate student needs. Service
-                  hours may be extended during special events and finals period.
+                <p className="text-xl text-gray-600">
+                  Always here when you need us
                 </p>
-
-                <div className="space-y-4">
-                  {scheduleData.map((item, index) => (
-                    <div
-                      key={index}
-                      className="flex bg-[var(--batesCard)] p-4 rounded-lg border border-[var(--batesBorder)] transition-all hover:border-[var(--batesMaroon)] hover:shadow-md hover:translate-y-[-2px]"
-                    >
-                      <div className="text-[var(--batesMaroon)] mr-4">
-                        <FaCalendarAlt size={20} />
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-white">{item.day}</h4>
-                        <p className="text-gray-300">{item.hours}</p>
-                      </div>
-                    </div>
-                  ))}
-                  <div className="p-4 bg-[rgba(136,17,36,0.1)] rounded-lg border border-[rgba(136,17,36,0.2)]">
-                    <p className="text-white text-sm">
-                      <strong>Note:</strong> L/A Express offers off-campus
-                      destinations. See the{" "}
-                      <a
-                        href="https://www.bates.edu/campus-safety/bobcat-express-2/"
-                        className="text-[var(--batesMaroon)] hover:underline"
-                      >
-                        Bates Bobcat Express
-                      </a>{" "}
-                      webpage for the complete schedule and route information.
-                    </p>
-                  </div>
-                </div>
               </div>
 
-              <div className="md:w-1/2">
-                <h2 className="text-3xl font-bold mb-6 text-white">
-                  Emergency Contact
-                </h2>
-                <div className="dark-card">
-                  <h3 className="text-xl font-bold mb-4 text-white">
-                    Contact Information
-                  </h3>
-                  <div className="space-y-4">
-                    <div className="flex items-start">
-                      <div className="text-[var(--batesMaroon)] mr-4 mt-1">
-                        <FaPhoneAlt />
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-white">
-                          Shuttle Dispatch
-                        </h4>
-                        <p className="text-gray-300">(207) 786-6254</p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          For regular ride requests and information
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start">
-                      <div className="text-[var(--batesMaroon)] mr-4 mt-1">
-                        <FaPhoneAlt />
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-white">
-                          Campus Safety
-                        </h4>
-                        <p className="text-gray-300">(207) 786-6111</p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          For emergencies and after-hours assistance
-                        </p>
-                      </div>
+              <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-6">
+                      Regular Schedule
+                    </h3>
+                    <div className="space-y-4">
+                      {scheduleData.slice(0, 4).map((item, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                        >
+                          <span className="font-semibold text-gray-900">
+                            {item.day}
+                          </span>
+                          <span className="text-gray-600">{item.hours}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
 
-                  <div className="mt-6 p-4 bg-[rgba(136,17,36,0.1)] rounded-lg border border-[rgba(136,17,36,0.2)]">
-                    <p className="text-gray-300">
-                      <strong className="text-white">Important:</strong> In case
-                      of emergency, please call Campus Safety directly for
-                      immediate assistance.
-                    </p>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-6">
+                      Contact Info
+                    </h3>
+                    <div className="space-y-4">
+                      <div className="flex items-center">
+                        <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                          <FaPhoneAlt className="text-red-600" />
+                        </div>
+                        <div>
+                          <div className="font-semibold text-gray-900">
+                            Shuttle Dispatch
+                          </div>
+                          <div className="text-gray-600">(207) 786-6254</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center">
+                        <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                          <FaPhoneAlt className="text-red-600" />
+                        </div>
+                        <div>
+                          <div className="font-semibold text-gray-900">
+                            Emergency
+                          </div>
+                          <div className="text-gray-600">(207) 786-6111</div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -923,295 +850,229 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Ride Request Form Section */}
+        {/* Ride Request Form Section - Only for authenticated users */}
         {user && !document.cookie.includes("admin=true") && (
-          <div className="mt-16 mb-24 max-w-4xl mx-auto px-4 sm:px-6">
-            <h2 className="text-3xl font-bold text-white tracking-wide mb-6 text-center">
-              Request a Ride
-            </h2>
-            <div className="bg-[var(--batesCardBg)] shadow-xl rounded-xl p-6 border border-[var(--batesBorder)]">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="student_name" className="form-label">
-                      Full Name
-                    </label>
-                    <input
-                      id="student_name"
-                      type="text"
-                      value={rideData.student_name}
-                      onChange={(e) =>
-                        setRideData({
-                          ...rideData,
-                          student_name: e.target.value,
-                        })
-                      }
-                      className="form-input"
-                      placeholder="Your full name"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="passengers" className="form-label">
-                      Number of Passengers
-                    </label>
-                    <input
-                      id="passengers"
-                      type="number"
-                      min="1"
-                      max="4"
-                      value={rideData.passengers}
-                      onChange={(e) =>
-                        setRideData({
-                          ...rideData,
-                          passengers: parseInt(e.target.value, 10) || 1,
-                        })
-                      }
-                      className="form-input"
-                      required
-                    />
-                  </div>
-                </div>
+          <section className="py-20 bg-white">
+            <div className="container mx-auto px-6 max-w-4xl">
+              <div className="text-center mb-12">
+                <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                  Request a Ride
+                </h2>
+                <p className="text-xl text-gray-600">
+                  Quick and easy ride booking
+                </p>
+              </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="pickup_location" className="form-label">
-                      Pickup Location
-                    </label>
-                    <select
-                      id="pickup_location"
-                      value={rideData.pickup_location}
-                      onChange={(e) =>
-                        setRideData({
-                          ...rideData,
-                          pickup_location: e.target.value,
-                        })
-                      }
-                      className="form-input"
-                      required
-                    >
-                      <option value="">Select pickup location</option>
-                      {shuttleLocations.map((location) => (
-                        <option key={location.id} value={location.name}>
-                          {location.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label htmlFor="destination" className="form-label">
-                      Destination
-                    </label>
-                    <select
-                      id="destination"
-                      value={rideData.destination}
-                      onChange={(e) =>
-                        setRideData({
-                          ...rideData,
-                          destination: e.target.value,
-                        })
-                      }
-                      className="form-input"
-                      required
-                    >
-                      <option value="">Select destination</option>
-                      {shuttleLocations.map((location) => (
-                        <option key={location.id} value={location.name}>
-                          {location.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+              <div className="bg-white rounded-2xl shadow-2xl p-8 border">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        value={rideData.student_name}
+                        onChange={(e) =>
+                          setRideData({
+                            ...rideData,
+                            student_name: e.target.value,
+                          })
+                        }
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                        placeholder="Your full name"
+                        required
+                      />
+                    </div>
 
-                <div>
-                  <label htmlFor="notes" className="form-label">
-                    Additional Notes{" "}
-                    <span className="text-gray-400 text-sm">(Optional)</span>
-                  </label>
-                  <textarea
-                    id="notes"
-                    value={rideData.notes || ""}
-                    onChange={(e) =>
-                      setRideData({ ...rideData, notes: e.target.value })
-                    }
-                    className="form-input h-24"
-                    placeholder="Any special instructions or information"
-                  ></textarea>
-                </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        Passengers
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="4"
+                        value={rideData.passengers}
+                        onChange={(e) =>
+                          setRideData({
+                            ...rideData,
+                            passengers: parseInt(e.target.value) || 1,
+                          })
+                        }
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                        required
+                      />
+                    </div>
+                  </div>
 
-                <div className="pt-4">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        Pickup Location
+                      </label>
+                      <select
+                        value={rideData.pickup_location}
+                        onChange={(e) =>
+                          setRideData({
+                            ...rideData,
+                            pickup_location: e.target.value,
+                          })
+                        }
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                        required
+                      >
+                        <option value="">Select pickup location</option>
+                        {shuttleLocations.map((location) => (
+                          <option key={location.id} value={location.name}>
+                            {location.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        Destination
+                      </label>
+                      <select
+                        value={rideData.destination}
+                        onChange={(e) =>
+                          setRideData({
+                            ...rideData,
+                            destination: e.target.value,
+                          })
+                        }
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                        required
+                      >
+                        <option value="">Select destination</option>
+                        {shuttleLocations.map((location) => (
+                          <option key={location.id} value={location.name}>
+                            {location.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-900 mb-2">
+                      Additional Notes (Optional)
+                    </label>
+                    <textarea
+                      value={rideData.notes || ""}
+                      onChange={(e) =>
+                        setRideData({ ...rideData, notes: e.target.value })
+                      }
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all h-24 resize-none"
+                      placeholder="Any special instructions..."
+                    ></textarea>
+                  </div>
+
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-4 rounded-lg font-medium text-white bg-gradient-to-r from-[var(--batesMaroon)] to-[#a01b1b] hover:from-[#a01b1b] hover:to-[var(--batesMaroon)] transition-all duration-300 flex justify-center items-center"
+                    className="w-full py-4 bg-gradient-to-r from-red-600 to-red-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:from-red-500 hover:to-red-600 transition-all duration-300 disabled:opacity-50"
                   >
                     {loading ? (
-                      <>
-                        <span className="mr-2 animate-spin">
-                          <svg
-                            className="w-5 h-5"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            ></circle>
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            ></path>
-                          </svg>
-                        </span>
+                      <div className="flex items-center justify-center">
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3"></div>
                         Requesting Ride...
-                      </>
+                      </div>
                     ) : (
-                      <>Request Ride</>
+                      "Request Ride"
                     )}
                   </button>
-                </div>
-              </form>
+                </form>
+              </div>
             </div>
-          </div>
+          </section>
         )}
 
-        {/* Call to Action */}
-        <section className="py-16 bg-gradient-to-br from-[var(--batesBlue)] to-black">
+        {/* Call to Action Section */}
+        <section className="py-20 bg-gradient-to-r from-gray-900 to-black">
           <div className="container mx-auto px-6 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
-              Ready to Get Started?
-            </h2>
+            <p className="text-xl text-gray-300 mb-8">
+              Login to request a ride
+            </p>
+
             {!user && (
               <motion.button
                 whileHover={{ scale: 1.05 }}
-                className="bg-batesMaroon hover:bg-red-800 text-white px-8 py-4 rounded-lg font-semibold shadow-xl inline-flex items-center gap-2 transition-all duration-300"
+                whileTap={{ scale: 0.95 }}
                 onClick={handleSignIn}
+                className="px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 text-white font-semibold rounded-full shadow-xl hover:shadow-red-500/25 hover:from-red-500 hover:to-red-600 transition-all duration-300"
               >
-                <FaSignInAlt /> Sign In Now
+                <FaGoogle className="inline mr-3" />
+                Sign In Now
               </motion.button>
             )}
+
             {user && (
               <Link
-                href="/dashboard"
-                className="bg-batesMaroon hover:bg-red-800 text-white px-8 py-4 rounded-lg font-semibold shadow-xl inline-flex items-center gap-2 transition-all duration-300"
+                href="/student"
+                className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 text-white font-semibold rounded-full shadow-xl hover:shadow-red-500/25 hover:from-red-500 hover:to-red-600 transition-all duration-300"
               >
-                Go to Dashboard <FaArrowRight />
+                Go to Dashboard
+                <FaArrowRight className="ml-3" />
               </Link>
             )}
           </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-[var(--batesCard)] text-white py-12">
+      {/* Modern Footer */}
+      <footer className="bg-black text-white py-16">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <Image
-                src="/bateslogo.png"
-                alt="Bates College Logo"
-                width={150}
-                height={50}
-                className="mb-4"
-                sizes="(max-width: 768px) 100vw, 150px"
-              />
-              <p className="text-gray-400 text-sm">
-                Providing safe and reliable transportation for the Bates College
-                community.
-              </p>
-              <p className="text-batesMaroon font-semibold text-sm mt-2">
-                Bobcat Express Phone: (207) 786-8300
-              </p>
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <div className="md:col-span-2">
+              <div className="flex items-center mb-6">
+                <Image
+                  src="/bateslogo.png"
+                  alt="Bates College Logo"
+                  width={120}
+                  height={40}
+                  className="brightness-0 invert"
+                />
+              </div>
+              <div className="text-red-400 font-semibold mb-4">
+                (207) 786-6254
+              </div>
+              <address className="not-italic text-gray-400 space-y-1">
+                <p>2 Andrews Road</p>
+                <p>Lewiston, Maine 04240</p>
+                <p>Phone: 1-207-786-6255</p>
+                <p className="text-red-400 font-semibold mt-2">
+                  Emergency: (207) 786-6111
+                </p>
+              </address>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
-              <ul className="space-y-2 text-gray-400">
+              <h3 className="text-xl font-semibold mb-6">Quick Links</h3>
+              <ul className="space-y-3 text-gray-400">
                 <li>
                   <Link
-                    href="/dashboard"
-                    className="hover:text-batesMaroon transition-colors"
+                    href="https://www.bates.edu/campus-safety/"
+                    className="hover:text-white transition-colors"
                   >
-                    Dashboard
+                    Campus Safety
                   </Link>
                 </li>
                 <li>
                   <Link
                     href="https://www.bates.edu/campus-safety/bobcat-express-2/"
-                    className="hover:text-batesMaroon transition-colors"
+                    className="hover:text-white transition-colors"
                   >
                     Services
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    href="https://www.bates.edu/campus-safety/"
-                    className="hover:text-batesMaroon transition-colors"
-                  >
-                    About
-                  </Link>
-                </li>
               </ul>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Shuttle Services</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <Link
-                    href="https://www.bates.edu/campus-safety/bobcat-express-2/#accessible-support-shuttle"
-                    className="hover:text-batesMaroon transition-colors"
-                  >
-                    Accessible Support
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="https://www.bates.edu/campus-safety/bobcat-express-2/#community-engaged-learning-shuttles-cels"
-                    className="hover:text-batesMaroon transition-colors"
-                  >
-                    Community Engaged Learning
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="https://www.bates.edu/campus-safety/bobcat-express-2/#medical-appointments-schedule-in-advance"
-                    className="hover:text-batesMaroon transition-colors"
-                  >
-                    Medical Appointments
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="https://www.bates.edu/campus-safety/bobcat-express-2/#safe-ride-shuttle"
-                    className="hover:text-batesMaroon transition-colors"
-                  >
-                    Safe Ride & L/A Express
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Contact</h3>
-              <address className="not-italic text-gray-400">
-                <p>Bates College</p>
-                <p>2 Andrews Road</p>
-                <p>Lewiston, ME 04240</p>
-                <p className="mt-2">Phone: (207) 786-6254</p>
-                <p>Emergency: (207) 786-6111</p>
-              </address>
             </div>
           </div>
 
-          <div className="border-t border-gray-800 mt-10 pt-6 text-center text-gray-500 text-sm">
+          <div className="border-t border-gray-800 pt-8 text-center text-gray-500">
             <p>
               © {new Date().getFullYear()} Bates College Bobcat Express. All
               rights reserved.

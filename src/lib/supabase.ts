@@ -40,35 +40,55 @@ export type ShuttleLocation = {
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-if (!supabaseUrl || !supabaseKey) {
-  console.warn('Supabase URL or Key is missing. Make sure to set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your .env.local file.');
+// Check if environment variables are properly set
+const hasValidConfig = supabaseUrl && supabaseKey && 
+  supabaseUrl !== '' && supabaseKey !== '' &&
+  supabaseUrl.startsWith('http') && supabaseKey.length > 10;
+
+if (!hasValidConfig) {
+  console.warn('⚠️ Supabase configuration missing or invalid. Please check your .env.local file:');
+  console.warn('- NEXT_PUBLIC_SUPABASE_URL should start with https://');
+  console.warn('- NEXT_PUBLIC_SUPABASE_ANON_KEY should be a valid key');
+  console.warn('Running in offline mode with mock data.');
 }
 
-// Create client even if variables are empty - this allows the app to run in development
-// with fallback behaviors (mock data, etc.)
-export const supabase = createClient(supabaseUrl, supabaseKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-  },
-});
+// Create client only if we have valid configuration
+export const supabase = hasValidConfig 
+  ? createClient(supabaseUrl, supabaseKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+      },
+    })
+  : createClient('https://placeholder.supabase.co', 'placeholder-key'); // Placeholder to prevent crashes
 
-console.log('Supabase client initialized');
+console.log(hasValidConfig ? 'Supabase client initialized with valid config' : 'Supabase client initialized in offline mode');
 
-// Check if client can actually connect - run a minimal query
-(async () => {
-  try {
-    // Simple health check query
-    const { error } = await supabase.from('rides').select('id').limit(1);
-    if (error) {
-      console.error('Supabase connection test failed:', error);
-    } else {
-      console.log('Supabase connection test successful');
+// Only test connection if we have valid configuration
+if (hasValidConfig) {
+  // Delay the connection test to avoid blocking module loading
+  setTimeout(async () => {
+    try {
+      // Simple health check query with timeout
+      const { error } = await supabase.from('rides').select('id').limit(1);
+      if (error) {
+        console.error('Supabase connection test failed:', {
+          message: error.message || 'Unknown error',
+          details: error.details || 'No details available',
+          hint: error.hint || 'Check your database configuration'
+        });
+      } else {
+        console.log('✅ Supabase connection test successful');
+      }
+    } catch (e) {
+      console.error('Error testing Supabase connection:', {
+        message: e instanceof Error ? e.message : 'Unknown error',
+        type: typeof e,
+        error: e
+      });
     }
-  } catch (e) {
-    console.error('Error testing Supabase connection:', e);
-  }
-})();
+  }, 1000); // Wait 1 second before testing
+}
 
 // Mock data for development when Supabase is not connected
 const mockRides: Ride[] = [
