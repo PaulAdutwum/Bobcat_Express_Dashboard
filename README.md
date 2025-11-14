@@ -1,11 +1,11 @@
-# 🚌 Bobcat Express Shuttle — Bates College
+#  Bobcat Express Shuttle — Bates College
 
 A full-featured, real-time shuttle management system designed for the Bates College community. This platform connects students, faculty, and staff with on-demand transportation services around campus and nearby cities, offering seamless booking, tracking, and administration tools.
 
 
 Live Demo: [https://bobcatshuttle.vercel.app/](https://bobcatshuttle.vercel.app/)
 
-## 🎥 Demo Video
+## Demo Video
 
 [![Bobcat Express Demo](https://img.youtube.com/vi/H-DmH3itTGw/maxresdefault.jpg)](https://www.youtube.com/shorts/H-DmH3itTGw)
 
@@ -15,7 +15,7 @@ Live Demo: [https://bobcatshuttle.vercel.app/](https://bobcatshuttle.vercel.app/
   Your browser does not support the video tag.
 </video>
 
-## 🚀 Overview
+##  Overview
 
 Bobcat Express provides:
 
@@ -27,27 +27,27 @@ Bobcat Express provides:
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-### 🧑‍🎓 For Students
-- 🚕 **Ride Booking** with pickup/drop-off  
+### For Students
+- **Ride Booking** with pickup/drop-off  
 - **Live Shuttle Map** (Google Maps)  
 - **Status Notifications** (pending → active → complete)  
 - **Ride History** tracking  
 - **Integrated Chat** with admin/driver  
 - **User Profile** with preferences  
 
-### 🧑‍💼 For Admins
+### For Admins
 - **Central Dashboard** for all rides  
 - **Ride Request Management**  
-- 👨‍✈ **Driver Assignment Tools**  
+-  **Driver Assignment Tools**  
 - **Analytics Suite**:  
   - Total rides, active/completed rides  
   - Wait times, peak hours  
   - Most requested locations  
-- 📄 **User & Ride Logs**  
+-  **User & Ride Logs**  
 
-### 🚍 For Drivers
+###  For Drivers
 - **Trip Queue** in real-time  
 - **Navigation Links**  
 - **Ride Status Control**  
@@ -55,7 +55,7 @@ Bobcat Express provides:
 
 ---
 
-## 🧪 Technical Features
+## Technical Features
 
 - **Real-Time Location Tracking** (Google Maps + Firebase)  
 - **Instant Ride Updates** via Supabase & Firestore  
@@ -67,9 +67,9 @@ Bobcat Express provides:
 
 ---
 
-## 🧑‍💻 Getting Started
+## Getting Started
 
-### 🔐 Prerequisites
+### Prerequisites
 - Node.js v16+  
 - npm or yarn  
 - Firebase & Supabase accounts  
@@ -77,7 +77,7 @@ Bobcat Express provides:
 
 ---
 
-### 🛠️ Installation
+### Installation
 
 ```bash
 # 1. Clone the repo
